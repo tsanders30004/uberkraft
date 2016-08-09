@@ -31,9 +31,28 @@ def home():
 
 @app.route('/xlat')
 def xlat():
-    sql1= "select key, en, de from xlat"
+
+    session['lang'] = "en"
+
+    try:
+        if len(session['lang']) == 0:
+            print "language not defined...  assume english"
+            lang = "en"
+        elif session['lang'] == "de":
+            lang = "de"
+        else:
+            lang = "en"
+    except Exceptiopn, e:
+        print "error with language assignment.  assuming english"
+        lang = "en"
+
+    print "langauge = " + lang
+
+    sql1= "select key, " + lang + " from xlat"
+    print sql1
     qry1 = db.query(sql1)
-    return render_template('xlat.html', title='Translate Test', xlat_rows=qry1.namedresult())
+    print(dict(qry1.namedresult()))
+    return render_template('xlat.html', title='Translate Test', xlat_rows=dict(qry1.namedresult()))
 
 @app.route('/profile')
 def profile():
