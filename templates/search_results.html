@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% block body %}
+<h1 style="color: white;">Search Results</h1>
+<table class="table-condensed table-striped width_100">
+     <tr class="tr_border">
+          <td class="search_row bold">User Name</td>
+          <td class="search_row bold">Name</td>
+          <td class="search_row bold">Chirp</td>
+          <td class="search_row">&nbsp;</td>
+     </tr>
+     {% for search_row in search_results %}
+     <form action="/add_follow" method="POST">
+          <tr class="tr_border">
+               <td class="search_row">{{search_row.handle}}</td>
+               <td class="search_row">{{search_row.name}}</td>
+               <td class="search_row">{{search_row.chirp}}</td>
+               <td class="search_row"><button class="btn btn-success" type="submit" name="user_to_follow" value="{{search_row.handle}}">Follow</button></td>
+          </tr>
+     </form>
+     {% endfor %}
+</table>
+{% endblock %}
+
+
+
+table-condensed table-striped width_100

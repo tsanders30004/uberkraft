@@ -1,0 +1,85 @@
+* {
+     box-sizing: border-box;
+}
+body {
+     font-family: Verdana;
+     background-color: rgb(153, 153, 153);
+}
+.light_bg {
+     background-color: rgb(153, 153, 153);
+}
+.med_bg {
+     background-color: rgb(102, 102, 102);
+}
+.dark_bg {
+     background-color: rgb(0, 166, 206);
+}
+.light_text {
+     color: rgb(153, 153, 153);
+}
+.med_text {
+     color: rgb(102, 102, 102);
+}
+.dark_text {
+     color: rgb(0, 166, 206);
+}
+.profile_photo {
+     border: 2px solid rgb(102, 102, 102);
+}
+.profile_label {
+     font-size: 0.8em;
+     text-transform: uppercase;
+}
+.profile_stats {
+     font-size: 1.15em;
+     font-weight: bold;
+     color: rgb(0, 166, 206);
+}
+.container {
+     margin: auto;
+}
+.width_100 {
+     width: 100%;
+}
+.bold {
+     font-weight: bold;
+}
+.summary_box {
+     border: 0.3em solid rgb(102, 102, 102);
+     border-radius: 0.5em;
+     padding: 1em;
+     /*background-color: rgb(153, 153, 153);*/
+     background-color: white;
+}
+.tweet_box {
+     border: 0.3em solid rgb(102, 102, 102);
+     border-radius: 0.5em;
+     padding: 1em;
+}
+.statistics {
+     padding-top: 1em;
+}
+.search_row {
+     padding: 0.5em;
+     padding-right: 1em;
+}
+.table_border {
+     border: 0.3em solid rgb(175, 64, 42);
+     border-radius: 0.5em;
+}
+.tr_border {
+     border: 1px solid  rgb(102, 102, 102);
+     background-color: #CCCCCC;
+}
+.nav_text {
+     color: #EFEFEF;
+     padding-top: 0;
+     padding-bottom: 0;
+}
+.nav_text:hover {
+     font-weight: bold;
+     color: white;
+}
+td {
+     padding: 0.5em;
+}

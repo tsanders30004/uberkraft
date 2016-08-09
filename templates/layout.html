@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="UTF-8">
+     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+     <meta name="viewport" content="width=device-width, initial-scale=1">
+     <title>Uberkraft</title>
+
+     <!-- Bootstrap -->
+     <link href="../static/animate.css" rel="stylesheet">
+     <link href="../static/bootstrap.min.css" rel="stylesheet">
+     <link href="../static/chirp.css" rel="stylesheet">
+
+     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+     <!--[if lt IE 9]>
+     <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+     <![endif]-->
+</head>
+<body>
+     <nav class="navbar navbar-default" style="background-color: rgb(0, 166, 206);">
+          <div class="container-fluid">
+               <!-- Brand and toggle get grouped for better mobile display -->
+               <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#defaultNavbar1"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+                    <a class="navbar-brand" href="/profile"><img src="../static/chirp-mascot.png" width="50" height="50" style="margin-top: -0.45em;"></a>
+               </div>
+               <!-- Collect the nav links, forms, and other content for toggling -->
+               <div class="collapse navbar-collapse" id="defaultNavbar1">
+                    <ul class="nav navbar-nav">
+                         <li><a href="/signup"><p class="nav_text">Signup</p><span class="sr-only">(current)</span></a></li>
+                         <li><a href="/login"><p class="nav_text">Login</p></a></li>
+                         <li><a href="/profile"><p class="nav_text">Profile</p></a></li>
+                         <li><a href="/timeline"><p class="nav_text">Timeline</p></a></li>
+                         <li><a href="/logout"><p class="nav_text">Logout</p></a></li>
+                    </ul>
+                    <form class="navbar-form navbar-right" role="search" action="/search" method="POST">
+                         <div class="form-group">
+                              <input type="text" class="form-control" placeholder="Search" name="search_str" required>
+                         </div>
+                         <button type="submit" class="btn btn-default">Submit</button>
+                    </form>
+               </div>
+               <!-- /.navbar-collapse -->
+          </div>
+          <!-- /.container-fluid -->
+     </nav>
+
+     <!-- MAIN CONTENT -->
+     <div class="container">
+          {% block body %}{% endblock %}
+          <div class="row">
+               <div class="text-center col-md-6 col-md-offset-3">
+                    <h4>Uberkraft </h4>
+                    <p>Copyright &copy; 2016 &middot; All Rights Reserved &middot; <a href="http://web-caffeine.com/" target="_blank">Web Caffeine</a></p>
+               </div>
+          </div>
+     </div>
+
+     <!-- Script Files ************************************************************************************************* -->
+     <script src="../static/jquery.js"></script>
+     <script src="../static/bootstrap.min.js"></script>
+</body>
+</html>

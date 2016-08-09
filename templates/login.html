@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<div class="row">
+     <div class="col-xs-3">
+          <p>&nbsp;</p>
+     </div>
+     <div class="col-xs-6">
+          <form action="/check_pw" method="POST">
+               <div class="row" style="padding-bottom: 1em;">
+                    <div class="col-xs-6">
+                         <label>UserID: </label>
+                    </div>
+                    <div class="col-xs-6">
+                         <input type="text" name="userid" required>
+                    </div>
+               </div>
+               <div class="row" style="padding-bottom: 1em;">
+                    <div class="col-xs-6">
+                         <label>Password: </label>
+                    </div>
+                    <div class="col-xs-6">
+                         <input type="password" name="password" required>
+                    </div>
+               </div>
+
+               <div class="row" style="padding-bottom: 1em;">
+                    <div class="col-xs-6">
+                         <button type="submit" class="btn btn-warning">Login</button>
+                    </div>
+                    <div class="col-xs-6">
+                         <p>&nbsp;</p>
+                    </div>
+               </div>
+          </form>
+     </div>
+     <div class="col-xs-3">
+<p>&nbsp;</p>
+     </div>
+</div>
+
+
+
+
+
+
+
+<!-- <form action="/check_pw" method="POST">
+     <label>UserID: </label>
+     <input type="text" name="userid">
+     <label>Password: </label>
+     <input type="password" name="password">
+     <button type="submit" class="btn btn-success">Login</button>
+</form> -->
+{% endblock %}
