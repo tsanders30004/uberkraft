@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
 {% block body %}
-<p>The username and/or password is not correct.</p>
-<a href="/login"><button class="btn btn-danger">Try Again</button></a>
+<p>{{xlat.bad_login}}</p>
+<a href="/login"><button class="btn btn-danger">{{xlat.try_again}}</button></a>
 {% endblock %}

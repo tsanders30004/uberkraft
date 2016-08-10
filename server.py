@@ -5,6 +5,10 @@ db=pg.DB(dbname='uberkraft')
 
 import bcrypt
 
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
 from flask import Flask, render_template, request, redirect, session, jsonify
 
 app = Flask('MyApp')
@@ -111,7 +115,7 @@ def timeline():
 
 @app.route('/login')
 def login():
-    return render_template('login.html', title='Login')
+    return render_template('login.html', title='Login', xlat=session['xlat'])
 
 @app.route('/logout')
 def logout():
@@ -120,82 +124,116 @@ def logout():
 
 @app.route('/signup')
 def signup():
-    return render_template(
-    'signup.html',
-    title='Sign Up')
+    return render_template('signup.html', title='Sign Up', xlat=session['xlat'])
+
+@app.route('/create_user', methods=['POST'])
+def create_user():
+    try:
+        userid      = request.form['userid']
+        password    = request.form['password']
+        fname       = request.form['fname']
+        lname       = request.form['lname']
+        email       = request.form['email']
+
+        # check to see if user id already exists
+        sql1 = "select userid from users where userid = $1"
+        print sql1
+        qry1 = db.query(sql1, userid)
+
+        if len(qry1.namedresult()) == 1:
+            # username is already taken.  redirect user to an error page
+            return render_template('tryagain.html', title='Create User', xlat=session['xlat'])
+        else:
+            # need to create the new user and direct the user to login.  encrypt the password
+            print password
+            binary_pw = password.encode('utf-8')
+            print binary_pw
+            hashed = bcrypt.hashpw(binary_pw, bcrypt.gensalt())
+            sql2 = "insert into users (userid, fname, lname, email, pw) values (" + quoted(userid) + comma + quoted(fname) + comma + quoted(lname) + comma + quoted(email) + comma + quoted(hashed) + ");"
+            qry2 = db.query(sql2)
+            return redirect('/login')
+
+    except Exception, e:
+        print "unable to create new user in /create_user"
+        print traceback.format_exc()
+        return "Error %s" % traceback.format_exc()
+        return redirect('/login')
 
 @app.route('/check_pw', methods=['POST'])
 def check_password():
     userid = request.form['userid']
     password = request.form['password']
 
-    sql = "select * from users where handle = $1"
-    query = db.query(sql, userid)
+    sql1 = "select * from users where userid = $1"
+    qry1 = db.query(sql1, userid)
 
-    if len(query.namedresult()) == 0:
+    if len(qry1.namedresult()) == 0:
         # user does not exist; re-route to signup page.
         return redirect('/signup')
     else:
         # user exists; continue checking password
-        for user in query.namedresult():
-            if bcrypt.hashpw(password.encode('utf-8'), user.password) == user.password:
+        for user in qry1.namedresult():
+            if bcrypt.hashpw(password.encode('utf-8'), user.pw) == user.pw:
                 # password was correct.  re-route to profile page
                 session['userid'] = userid
-                return redirect('/profile')
+                return redirect('/')
             else:
                 # password was not correct.  re-route to login page.
-                return render_template(
-                'badlogin.html',
-                title='Incorrect Login')
+                return render_template('badlogin.html', title='Incorrect Login', xlat=session['xlat'])
 
-@app.route('/new_chirp', methods=['POST'])
-def new_chirp():
-    # add a new chirp
-    new_chirp = request.form['new_chirp']
+@app.route('/rma')
+def rma():
+    return render_template('rma.html', title='RMA', xlat=session['xlat'])
 
-    sql1 = "select id from users where handle = " + quoted(session['userid']) + ";"
-    userid = db.query(sql1).dictresult()[0]["id"]
-
-    sql2 = "insert into chirps (chirper_id, chirp) values($1, $2)"
-    db.query(sql2, str(userid), new_chirp)
-
-    return redirect('/timeline')
-
-@app.route('/create_user', methods=['POST'])
-def create_user():
+@app.route('/process_rma', methods=['POST'])
+def process_rma():
     try:
-        userid = request.form['userid']
-        password = request.form['password']
+        customer = request.form['customer']
         fname = request.form['fname']
         lname = request.form['lname']
+        phone = request.form['phone']
+        email = request.form['email']
+        sn = request.form['sn']
+        prob = request.form['prob']
 
-        # check to see if user id already exists
-        sql = "select handle from users where handle = $1"
-        query = db.query(sql, userid)
+        print customer
+        print fname
+        print lname
+        print phone
+        print email
+        print sn
+        print prob
 
-        if len(query.namedresult()) == 1:
-            # username is already taken.  redirect user to an error page
-            return render_template('tryagain.html', title='Create User')
-        else:
-            # need to create the new user and direct the user to login.  encrypt the password
-            binary_pw = password.encode('utf-8')
-            hashed = bcrypt.hashpw(binary_pw, bcrypt.gensalt())
-            sql = "insert into users (handle, fname, lname, password) values (" + quoted(userid) + comma + quoted(fname) + comma + quoted(lname) + comma + quoted(hashed) + ");"
-            query = db.query(sql)
+        # find the customer id whose customer name was selected
+        sql1 = "select id from customers where cname = $1"
+        qry1 = db.query(sql1, customer)
 
-            #create a chirp at signin
-            sql = "select id from users where handle = " + quoted(userid) + ";"
-            print sql
-            query = db.query(sql)
-            new_userid = query.dictresult()[0]['id']
+        # convert the postgreSQL format of the customer ID [Row(id=1)] to a simple integer via dictresult()...
+        cust_id = qry1.dictresult()[0]['id']
 
-            sql = "insert into chirps (chirper_id, chirp) values (" + str(new_userid) + ", 'Welcome me to Chirp!')"
-            db.query(sql)
+        sql2 = "insert into rma(fname, lname, email, prob, sn, cust_id, phone) VALUES(" + quoted(fname) + comma + quoted(lname) + comma + quoted(email) + comma + quoted(prob) + comma + str(sn) + comma + str(cust_id) + comma + quoted(phone) + ")"
+        qry2 = db.query(sql2)
 
-            return redirect('/login')
+        return render_template('rma.html', title='RMA', xlat=session['xlat'])
+
+
+
+
+        # if len(qry1.namedresult()) == 1:
+        #     # username is already taken.  redirect user to an error page
+        #     return render_template('tryagain.html', title='Create User', xlat=session['xlat'])
+        # else:
+        #     # need to create the new user and direct the user to login.  encrypt the password
+        #     print password
+        #     binary_pw = password.encode('utf-8')
+        #     print binary_pw
+        #     hashed = bcrypt.hashpw(binary_pw, bcrypt.gensalt())
+        #     sql2 = "insert into users (userid, fname, lname, email, pw) values (" + quoted(userid) + comma + quoted(fname) + comma + quoted(lname) + comma + quoted(email) + comma + quoted(hashed) + ");"
+        #     qry2 = db.query(sql2)
+        #     return redirect('/login')
 
     except Exception, e:
-        print "something went wrong in /create_user route."
+        print "unable to create new rma in /rma"
         print traceback.format_exc()
         return "Error %s" % traceback.format_exc()
         return redirect('/login')

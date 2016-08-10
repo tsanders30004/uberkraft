@@ -83,3 +83,6 @@ body {
 td {
      padding: 0.5em;
 }
+.center {
+     text-align: center;
+}
