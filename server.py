@@ -26,19 +26,6 @@ comma = ","
 
 @app.route('/')
 def home():
-    # try:
-    #     print session['userid']
-    #     return redirect('/profile')
-    # except Exception, e:
-    #     print "not logged in"
-    #     return redirect('/login')
-    return render_template('main.html', title='Uberkraft', xlat=session['xlat'])
-
-@app.route('/xlat')
-def xlat():
-
-    session['lang'] = "de"
-
     try:
         if len(session['lang']) == 0:
             print "language not defined...  assume english"
@@ -47,7 +34,7 @@ def xlat():
             lang = "de"
         else:
             lang = "en"
-    except Exceptiopn, e:
+    except Exception, e:
         print "error with language assignment.  assuming english"
         lang = "en"
 
@@ -59,7 +46,33 @@ def xlat():
     print(dict(qry1.namedresult()))
     session['xlat'] = dict(qry1.namedresult())
 
-    return render_template('xlat.html', title='Translate Test', xlat_rows=dict(qry1.namedresult()))
+    # return render_template('xlat.html', title='Translate Test', xlat_rows=dict(qry1.namedresult()))
+    # this was the original
+    return render_template('main.html', title='Uberkraft', xlat=session['xlat'])
+
+# @app.route('/xlat')
+# def xlat():
+#     try:
+#         if len(session['lang']) == 0:
+#             print "language not defined...  assume english"
+#             lang = "en"
+#         elif session['lang'] == "de":
+#             lang = "de"
+#         else:
+#             lang = "en"
+#     except Exception, e:
+#         print "error with language assignment.  assuming english"
+#         lang = "en"
+#
+#     print "langauge = " + lang
+#
+#     sql1= "select key, " + lang + " from xlat"
+#     print sql1
+#     qry1 = db.query(sql1)
+#     print(dict(qry1.namedresult()))
+#     session['xlat'] = dict(qry1.namedresult())
+#
+#     return render_template('xlat.html', title='Translate Test', xlat_rows=dict(qry1.namedresult()))
 
 @app.route('/en', methods=['POST'])
 def en():
