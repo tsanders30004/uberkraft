@@ -22,17 +22,18 @@ comma = ","
 
 @app.route('/')
 def home():
-    try:
-        print session['userid']
-        return redirect('/profile')
-    except Exception, e:
-        print "not logged in"
-        return redirect('/login')
+    # try:
+    #     print session['userid']
+    #     return redirect('/profile')
+    # except Exception, e:
+    #     print "not logged in"
+    #     return redirect('/login')
+    return render_template('main.html', title='Uberkraft', xlat=session['xlat'])
 
 @app.route('/xlat')
 def xlat():
 
-    session['lang'] = "en"
+    session['lang'] = "de"
 
     try:
         if len(session['lang']) == 0:
@@ -52,7 +53,33 @@ def xlat():
     print sql1
     qry1 = db.query(sql1)
     print(dict(qry1.namedresult()))
+    session['xlat'] = dict(qry1.namedresult())
+
     return render_template('xlat.html', title='Translate Test', xlat_rows=dict(qry1.namedresult()))
+
+@app.route('/en', methods=['POST'])
+def en():
+    session['lang'] = "en"
+    lang = "en"
+    print (lang)
+    sql1= "select key, " + lang + " from xlat"
+    print sql1
+    qry1 = db.query(sql1)
+    print(dict(qry1.namedresult()))
+    session['xlat'] = dict(qry1.namedresult())
+    return render_template('main.html', title='Uberkraft', xlat=dict(qry1.namedresult()))
+
+@app.route('/de', methods=['POST'])
+def de():
+    session['lang'] = "de"
+    lang = "de"
+    print (lang)
+    sql1= "select key, " + lang + " from xlat"
+    print sql1
+    qry1 = db.query(sql1)
+    print(dict(qry1.namedresult()))
+    session['xlat'] = dict(qry1.namedresult())
+    return render_template('main.html', title='Uberkraft', xlat=dict(qry1.namedresult()))
 
 @app.route('/profile')
 def profile():
