@@ -183,7 +183,7 @@ def process_rma():
         lname = request.form['lname']
         phone = request.form['phone']
         email = request.form['email']
-        sn = request.form['sn']
+        # sn = request.form['sn']
         prob = request.form['prob']
 
         print customer
@@ -191,7 +191,7 @@ def process_rma():
         print lname
         print phone
         print email
-        print sn
+        # print sn
         print prob
 
         # find the customer id whose customer name was selected
@@ -201,7 +201,7 @@ def process_rma():
         # convert the postgreSQL format of the customer ID [Row(id=1)] to a simple integer via dictresult()...
         cust_id = qry1.dictresult()[0]['id']
 
-        sql2 = "insert into rma(fname, lname, email, prob, sn, cust_id, phone) VALUES(" + quoted(fname) + comma + quoted(lname) + comma + quoted(email) + comma + quoted(prob) + comma + str(sn) + comma + str(cust_id) + comma + quoted(phone) + ")"
+        sql2 = "insert into rma(fname, lname, email, prob, cust_id, phone) VALUES(" + quoted(fname) + comma + quoted(lname) + comma + quoted(email) + comma + quoted(prob) + comma + str(cust_id) + comma + quoted(phone) + ")"
         qry2 = db.query(sql2)
 
         return render_template('rma.html', title='RMA', xlat=session['xlat'])
@@ -232,7 +232,7 @@ def process_rma():
 @app.route('/process_fa', methods=['POST'])
 def process_fa():
     try:
-        rma_num = request.form['rma_num']
+        rma_num = request.form['rma_num_select'][:6]
         serial_num = request.form['serial_num']
         rcvd_date = request.form['received']
         trouble_shooting = request.form['trouble_shooting']
@@ -289,9 +289,10 @@ def analysis():
     print qry1.namedresult()
 
     # session['xlat'] = dict(qry1.namedresult())
-    session['rma_info'] = dict(qry1.namedresult())
 
-    return render_template('analysis.html', title='RMA', xlat=session['xlat'], rma_info=session['rma_info'])
+    # session['rma_info'] = dict(qry1.namedresult())
+
+    return render_template('analysis.html', title='RMA', xlat=session['xlat'], rma_info=qry1.dictresult())
 
 @app.route('/search', methods=['POST'])
 def search():
