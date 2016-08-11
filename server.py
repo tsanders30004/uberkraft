@@ -277,7 +277,21 @@ def process_fa():
 @app.route('/analysis')
 def analysis():
     session['last_page'] = {"page" : "analysis.html", "title" : "Failure Analysis"}
-    return render_template('analysis.html', title='RMA', xlat=session['xlat'])
+
+    # session['xlat'] = dict(qry1.namedresult())
+    #
+    # # return render_template('xlat.html', title='Translate Test', xlat_rows=dict(qry1.namedresult()))
+    # # this was the original
+    # return render_template('main.html', title='Uberkraft', xlat=session['xlat'])
+
+    sql1="select rma_info from v_rma_dropdown"
+    qry1 = db.query(sql1)
+    print qry1.namedresult()
+
+    # session['xlat'] = dict(qry1.namedresult())
+    session['rma_info'] = dict(qry1.namedresult())
+
+    return render_template('analysis.html', title='RMA', xlat=session['xlat'], rma_info=session['rma_info'])
 
 @app.route('/search', methods=['POST'])
 def search():

@@ -5,7 +5,12 @@
 
 <div class="row">
 
+     <!-- {% for dropdown_val in rma_info %}
+          {{dropdown_val.rma_info}}
+     {% endfor %} -->
+
      <form action="/process_fa" method="POST">
+
           <div class="form-group"><label for="rma_num">               {{xlat.rma_num}}:</label>               <input type="number"     class="form-control" name="rma_num" required></div>
           <div class="form-group"><label for="serial_num">            {{xlat.serial_num}}:</label>            <input type="number"     class="form-control" name="serial_num" required></div>
           <div class="form-group"><label for="received">              {{xlat.received}}:</label>              <input type="date"       class="form-control" name="received"></div>
