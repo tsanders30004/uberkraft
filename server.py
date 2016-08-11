@@ -60,7 +60,17 @@ def en():
     qry1 = db.query(sql1)
     print(dict(qry1.namedresult()))
     session['xlat'] = dict(qry1.namedresult())
-    return render_template('main.html', title='Uberkraft', xlat=dict(qry1.namedresult()))
+
+    # session['last_page'] = {"page" : "signup.html", "title" : "Sign Up"}
+    # except Exception, e:
+    # redirect to previous page if one is defined; else, direct to main.
+    try:
+        if session['last_page']['page']:
+            return render_template(session['last_page']['page'], title=session['last_page']['title'], xlat=dict(qry1.namedresult()))
+        else:
+            return render_template('main.html', title='Uberkraft', xlat=dict(qry1.namedresult()))
+    except Exception, e:
+        return render_template('main.html', title='Uberkraft', xlat=dict(qry1.namedresult()))
 
 @app.route('/de', methods=['POST'])
 def de():
@@ -72,42 +82,22 @@ def de():
     qry1 = db.query(sql1)
     print(dict(qry1.namedresult()))
     session['xlat'] = dict(qry1.namedresult())
-    return render_template('main.html', title='Uberkraft', xlat=dict(qry1.namedresult()))
-
-@app.route('/profile')
-def profile():
-
-    # is user logged in?
-    if len(session['userid']) == 0:
-        # user is not logged in; reroute.
-        return render_template('login.html', title='Login')
-
-    # user is logged in; general SQL data to display the profile.
-    sql1 = "select user_id, handle, fname, lname, num_chirps, num_following, num_being_followed from v_chirp_follow_summary where handle='" + session['userid'] + "'"
-    query1 = db.query(sql1)
-
-    sql2 = "select chirper_id, fname, lname, handle, to_char(chirp_date, 'MM/DD/YYYY: ') as chirp_date2, chirp from chirps join users on chirper_id = users.id where handle='" + session['userid'] + "' order by chirp_date desc;"
-    query2 = db.query(sql2)
-    return render_template('profile.html', title='Profile', profile_rows=query1.namedresult(), chirp_rows=query2.namedresult())
-
-@app.route('/timeline')
-def timeline():
-    # is user logged in?
-    if len(session['userid']) == 0:
-        # user is not logged in; reroute.
-        return render_template('login.html', title='Login')
-
-    # user is logged in; general SQL data to display the profile.
-    query1 = db.query("select chirper_id, chirp_date, to_char(chirp_date, 'MM/DD/YYYY: ') as chirp_date2, chirp, fname, lname, handle from chirps left join users on chirper_id = users.id where chirper_id in (select leader_id from follows where follower_id = 4) or chirper_id = 4 order by chirp_date desc;")
-
-    return render_template('timeline.html', title='Timeline', profile_rows=query1.namedresult(), timeline_rows=query1.namedresult())
+    try:
+        if session['last_page']['page']:
+            return render_template(session['last_page']['page'], title=session['last_page']['title'], xlat=dict(qry1.namedresult()))
+        else:
+            return render_template('main.html', title='Uberkraft', xlat=dict(qry1.namedresult()))
+    except Exception, e:
+        return render_template('main.html', title='Uberkraft', xlat=dict(qry1.namedresult()))
 
 @app.route('/login')
 def login():
+    session['last_page'] = {"page" : "login.html", "title" : "Login"}
     return render_template('login.html', title='Login', xlat=session['xlat'])
 
 @app.route('/logout')
 def logout():
+    session['last_page'] = {"page" : "logout.html", "title" : "Logout"}
     session['userid'] = ""
     return render_template('login.html', title='Login')
 
@@ -115,8 +105,7 @@ def logout():
 def signup():
     # record signup.html as the last page visited
     session['last_page'] = {"page" : "signup.html", "title" : "Sign Up"}
-    temp = session['last_page']
-
+    # temp = session['last_page']
     print session['last_page']['title']
 
     # return render_template('signup.html', title='Sign Up', xlat=session['xlat'])
@@ -183,6 +172,7 @@ def check_password():
 
 @app.route('/rma')
 def rma():
+    session['last_page'] = {"page" : "rma.html", "title" : "RMA"}
     return render_template('rma.html', title='RMA', xlat=session['xlat'])
 
 @app.route('/process_rma', methods=['POST'])
@@ -238,8 +228,60 @@ def process_rma():
         return "Error %s" % traceback.format_exc()
         return redirect('/login')
 
+
+@app.route('/process_fa', methods=['POST'])
+def process_fa():
+    try:
+        rma_num = request.form['rma_num']
+        serial_num = request.form['serial_num']
+        rcvd_date = request.form['received']
+        trouble_shooting = request.form['trouble_shooting']
+        repair = request.form['repair']
+        ship_date = request.form['shipped']
+        suspect_part_num = request.form['suspect_part_num']
+        root_cause = request.form['root_cause']
+
+        print rma_num
+        print serial_num
+        print rcvd_date
+        print trouble_shooting
+        print repair
+        print ship_date
+        print suspect_part_num
+        print root_cause
+
+        # sql1 = "INSERT INTO fa(rma_no, ts_pct, rep_pct, ship_date, root_id, suspect_pn, rcvd_date) VALUES(" + str(rma_num) + comma + str(trouble_shooting + comma + str(repair) + comma + str(ship_date) + comma + str(root_cause) + comma + str(suspect_part_num) + comma + str(rcvd_date) + ")"
+        # print sql1
+        # qry1 = db.query(sql1)
+        # db.query_formatted('INSERT INTO fa(rma_no, ts_pct, rep_pct, ship_date, root_id, suspect_pn, rcvd_date) VALUES(%d(rma_num), %d(trouble_shooting), %d(repair), %d(ship_date), %d(repair), %d(suspect_part_num), %d(rcvd_date)')
+        db.query('INSERT INTO fa(rma_no, ts_pct, rep_pct, ship_date, root_id, suspect_pn, rcvd_date) VALUES($1, $2, $3, $4, $5, $6, $7)', rma_num, trouble_shooting, repair, ship_date,  root_cause, suspect_part_num, rcvd_date )
+
+        # convert the postgreSQL format of the customer ID [Row(id=1)] to a simple integer via dictresult()...
+        # cust_id = qry1.dictresult()[0]['id']
+
+        # sql2 = "insert into rma(fname, lname, email, prob, sn, cust_id, phone) VALUES(" + quoted(fname) + comma + quoted(lname) + comma + quoted(email) + comma + quoted(prob) + comma + str(sn) + comma + str(cust_id) + comma + quoted(phone) + ")"
+        # qry2 = db.query(sql2)
+
+        return render_template('rma.html', title='RMA', xlat=session['xlat'])
+
+
+
+    except Exception, e:
+        print "unable to create new failure analysis in /fa"
+        print traceback.format_exc()
+        return "Error %s" % traceback.format_exc()
+        return redirect('/')
+
+
+
+@app.route('/analysis')
+def analysis():
+    session['last_page'] = {"page" : "analysis.html", "title" : "Failure Analysis"}
+    return render_template('analysis.html', title='RMA', xlat=session['xlat'])
+
 @app.route('/search', methods=['POST'])
 def search():
+    session['last_page'] = {"page" : "search.html", "title" : "Search"}
     search_list = request.form['search_str'].split()
 
     userid = session['userid']
@@ -282,21 +324,21 @@ def search():
     return render_template('search_results.html', title='Show Search Results', search_results = search_results.namedresult())
 
 
-@app.route('/add_follow', methods=['POST'])
-def add_follow():
-
-    user_to_follow = request.form['user_to_follow']
-    logged_in_user = session['userid']
-
-    sql = "insert into follows (follower_id, leader_id) values ((select id from users where users.handle = " + quoted(logged_in_user)+ "), (select id from users where users.handle = " + quoted(user_to_follow)+ "));"
-
-    try:
-        db.query(sql)
-        print "follow table was updated"
-        return redirect('/profile')
-    except Exception, e:
-        print "unique constraint violated; follow table not updated"
-        return redirect('/profile')
+# @app.route('/add_follow', methods=['POST'])
+# def add_follow():
+#
+#     user_to_follow = request.form['user_to_follow']
+#     logged_in_user = session['userid']
+#
+#     sql = "insert into follows (follower_id, leader_id) values ((select id from users where users.handle = " + quoted(logged_in_user)+ "), (select id from users where users.handle = " + quoted(user_to_follow)+ "));"
+#
+#     try:
+#         db.query(sql)
+#         print "follow table was updated"
+#         return redirect('/profile')
+#     except Exception, e:
+#         print "unique constraint violated; follow table not updated"
+#         return redirect('/profile')
 
 app.secret_key = 'CSF686CCF85C6FRTCHQDBJDXHBHC1G478C86GCFTDCR'
 
