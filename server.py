@@ -50,30 +50,6 @@ def home():
     # this was the original
     return render_template('main.html', title='Uberkraft', xlat=session['xlat'])
 
-# @app.route('/xlat')
-# def xlat():
-#     try:
-#         if len(session['lang']) == 0:
-#             print "language not defined...  assume english"
-#             lang = "en"
-#         elif session['lang'] == "de":
-#             lang = "de"
-#         else:
-#             lang = "en"
-#     except Exception, e:
-#         print "error with language assignment.  assuming english"
-#         lang = "en"
-#
-#     print "langauge = " + lang
-#
-#     sql1= "select key, " + lang + " from xlat"
-#     print sql1
-#     qry1 = db.query(sql1)
-#     print(dict(qry1.namedresult()))
-#     session['xlat'] = dict(qry1.namedresult())
-#
-#     return render_template('xlat.html', title='Translate Test', xlat_rows=dict(qry1.namedresult()))
-
 @app.route('/en', methods=['POST'])
 def en():
     session['lang'] = "en"
@@ -137,7 +113,14 @@ def logout():
 
 @app.route('/signup')
 def signup():
-    return render_template('signup.html', title='Sign Up', xlat=session['xlat'])
+    # record signup.html as the last page visited
+    session['last_page'] = {"page" : "signup.html", "title" : "Sign Up"}
+    temp = session['last_page']
+
+    print session['last_page']['title']
+
+    # return render_template('signup.html', title='Sign Up', xlat=session['xlat'])
+    return render_template(session['last_page']['page'], title=session['last_page']['title'], xlat=session['xlat'])
 
 @app.route('/create_user', methods=['POST'])
 def create_user():
@@ -187,8 +170,12 @@ def check_password():
         # user exists; continue checking password
         for user in qry1.namedresult():
             if bcrypt.hashpw(password.encode('utf-8'), user.pw) == user.pw:
-                # password was correct.  re-route to profile page
+                # password was correct.  create a session variable with the userid of the current user to signify that the user has logged in.
                 session['userid'] = userid
+
+                # if the user changes the language on a page of than the main page,
+
+
                 return redirect('/')
             else:
                 # password was not correct.  re-route to login page.
