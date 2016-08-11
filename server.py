@@ -173,7 +173,11 @@ def check_password():
 @app.route('/rma')
 def rma():
     session['last_page'] = {"page" : "rma.html", "title" : "RMA"}
-    return render_template('rma.html', title='RMA', xlat=session['xlat'])
+
+    sql1="select cname from customers order by cname"
+    qry1 = db.query(sql1)
+
+    return render_template('rma.html', title='RMA', xlat=session['xlat'], clist=qry1.dictresult())
 
 @app.route('/process_rma', methods=['POST'])
 def process_rma():
@@ -185,6 +189,7 @@ def process_rma():
         email = request.form['email']
         # sn = request.form['sn']
         prob = request.form['prob']
+        notes = request.form['notes']
 
         print customer
         print fname
@@ -193,6 +198,7 @@ def process_rma():
         print email
         # print sn
         print prob
+        print notes
 
         # find the customer id whose customer name was selected
         sql1 = "select id from customers where cname = $1"
@@ -201,7 +207,7 @@ def process_rma():
         # convert the postgreSQL format of the customer ID [Row(id=1)] to a simple integer via dictresult()...
         cust_id = qry1.dictresult()[0]['id']
 
-        sql2 = "insert into rma(fname, lname, email, prob, cust_id, phone) VALUES(" + quoted(fname) + comma + quoted(lname) + comma + quoted(email) + comma + quoted(prob) + comma + str(cust_id) + comma + quoted(phone) + ")"
+        sql2 = "insert into rma(fname, lname, email, prob, cust_id, phone, notes) VALUES(" + quoted(fname) + comma + quoted(lname) + comma + quoted(email) + comma + quoted(prob) + comma + str(cust_id) + comma + quoted(phone) + comma + quoted(notes) + ")"
         qry2 = db.query(sql2)
 
         return render_template('rma.html', title='RMA', xlat=session['xlat'])
@@ -235,26 +241,28 @@ def process_fa():
         rma_num = request.form['rma_num_select'][:6]
         serial_num = request.form['serial_num']
         rcvd_date = request.form['received']
-        trouble_shooting = request.form['trouble_shooting']
-        repair = request.form['repair']
+        # trouble_shooting = request.form['trouble_shooting']
+        # repair = request.form['repair']
         ship_date = request.form['shipped']
         suspect_part_num = request.form['suspect_part_num']
         root_cause = request.form['root_cause']
+        notes = request.form['notes']
 
-        print rma_num
-        print serial_num
-        print rcvd_date
-        print trouble_shooting
-        print repair
-        print ship_date
-        print suspect_part_num
-        print root_cause
+        # print rma_num
+        # print serial_num
+        # print rcvd_date
+        # print trouble_shooting
+        # print repair
+        # print ship_date
+        # print suspect_part_num
+        # print root_cause
 
         # sql1 = "INSERT INTO fa(rma_no, ts_pct, rep_pct, ship_date, root_id, suspect_pn, rcvd_date) VALUES(" + str(rma_num) + comma + str(trouble_shooting + comma + str(repair) + comma + str(ship_date) + comma + str(root_cause) + comma + str(suspect_part_num) + comma + str(rcvd_date) + ")"
         # print sql1
         # qry1 = db.query(sql1)
         # db.query_formatted('INSERT INTO fa(rma_no, ts_pct, rep_pct, ship_date, root_id, suspect_pn, rcvd_date) VALUES(%d(rma_num), %d(trouble_shooting), %d(repair), %d(ship_date), %d(repair), %d(suspect_part_num), %d(rcvd_date)')
-        db.query('INSERT INTO fa(rma_no, ts_pct, rep_pct, ship_date, root_id, suspect_pn, rcvd_date) VALUES($1, $2, $3, $4, $5, $6, $7)', rma_num, trouble_shooting, repair, ship_date,  root_cause, suspect_part_num, rcvd_date )
+        # db.query('INSERT INTO fa(rma_no, ts_pct, rep_pct, ship_date, root_id, suspect_pn, rcvd_date) VALUES($1, $2, $3, $4, $5, $6, $7)', rma_num, trouble_shooting, repair, ship_date,  root_cause, suspect_part_num, rcvd_date )
+        db.query('INSERT INTO fa(rma_no, ship_date, root_id, suspect_pn, rcvd_date, sn, notes) VALUES($1, $2, $3, $4, $5, $6, $7)', rma_num, ship_date,  root_cause, suspect_part_num, rcvd_date, serial_num, notes)
 
         # convert the postgreSQL format of the customer ID [Row(id=1)] to a simple integer via dictresult()...
         # cust_id = qry1.dictresult()[0]['id']
