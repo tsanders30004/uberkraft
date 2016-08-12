@@ -30,9 +30,22 @@
      jQuery.ajax({
           type:     "POST",
           url:      "/data_routecause",
-          success:  function(data){
-               console.log(data);
+          success:  function(sql_data){
+               console.log(sql_data);
                console.log('this is where you will graph the results...');
+
+               var i;
+
+               my_labels = [];
+               my_data = [];
+
+               for (i=0; i<sql_data.length; i++) {
+                    my_labels.push(sql_data[i].en);
+                    my_data.push(sql_data[i].total);
+               }
+
+               console.log(my_labels);
+               console.log(my_data);
           }
      });
 
