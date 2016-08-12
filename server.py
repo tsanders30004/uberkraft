@@ -315,6 +315,34 @@ def graph():
     return render_template('graph.html', title='Graph', xlat=session['xlat'])
 
 
+@app.route('/g_rootcause')
+def g_rootcause():
+    session['last_page'] = {"page" : "g_rootcause.html", "title" : "Root Cause Statistics"}
+    return render_template('g_rootcause.html', title='Root Cause Statistics', xlat=session['xlat'])
+
+@app.route('/data_routecause', methods=['POST'])
+def data_routecause():
+    sql1="select en, count(root_id) as total from xlat join fa on xlat.id = fa.root_id group by en order by total desc, en"
+    qry1=db.query(sql1)
+    # print qry1.dictresult()
+    # print qry1.dictresult()[0]
+    # print qry1.dictresult()[0]['total']
+    # print qry1.dictresult()[0]['en']
+    # print qry1.namedresult()
+    # print qry1.getresult()
+    # print qry1.listfields()
+    # print qry1.getresult()
+    # print qry1.getresult()
+    print "***********"
+    return jsonify(qry1.dictresult())
+    print ', '.join([d['en'] for d in qry1.dictresult()])
+    print "***********"
+    # print qry1.array_to_json()
+    # return (qry1.namedresult()) ///  caused HTTP error 500
+    # return "abc"
+    # return ', '.join([d['en'] for d in qry1.dictresult()])
+
+
 @app.route('/db_total_by_rootid', methods=['POST'])
 def db_total_by_rootid():
     sql1="select en, count(root_id) as total from xlat join fa on xlat.id = fa.root_id group by en order by total desc, en"
