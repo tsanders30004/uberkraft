@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<h1>graph test</h1>
+<div class="row">
+     <div class="col-xs-3">
+          <p>&nbsp;</p>
+     </div>
+     <div class="col-xs-6">
+          <form action="/db_total_by_rootid" method="POST">
+               <!-- <div class="row" style="padding-bottom: 1em;"><div class="col-xs-6"><label>{{xlat.userid}}</label></div><div class="col-xs-6"><input type="text" name="userid" required></div></div>
+               <div class="row" style="padding-bottom: 1em;"><div class="col-xs-6"><label>{{xlat.password}}</label></div><div class="col-xs-6"><input type="password" name="password" required></div></div> -->
+               <div class="row" style="padding-bottom: 1em;">
+                    <div class="col-xs-6">
+                         <button type="submit" class="btn btn-warning">get graph data</button>
+                    </div>
+                    <div class="col-xs-6"><p>&nbsp;</p>
+                    </div>
+               </div>
+          </form>
+     </div>
+     <div class="col-xs-3">
+          <p>&nbsp;</p>
+     </div>
+</div>
+
+{% endblock %}

@@ -46,8 +46,6 @@ def home():
     print(dict(qry1.namedresult()))
     session['xlat'] = dict(qry1.namedresult())
 
-    # return render_template('xlat.html', title='Translate Test', xlat_rows=dict(qry1.namedresult()))
-    # this was the original
     return render_template('main.html', title='Uberkraft', xlat=session['xlat'])
 
 @app.route('/en', methods=['POST'])
@@ -61,9 +59,6 @@ def en():
     print(dict(qry1.namedresult()))
     session['xlat'] = dict(qry1.namedresult())
 
-    # session['last_page'] = {"page" : "signup.html", "title" : "Sign Up"}
-    # except Exception, e:
-    # redirect to previous page if one is defined; else, direct to main.
     try:
         if session['last_page']['page']:
             return render_template(session['last_page']['page'], title=session['last_page']['title'], xlat=dict(qry1.namedresult()))
@@ -92,6 +87,11 @@ def de():
 
 @app.route('/login')
 def login():
+    session['last_page'] = {"page" : "login.html", "title" : "Login"}
+    return render_template('login.html', title='Login', xlat=session['xlat'])
+
+@app.route('/login0')
+def login0():
     session['last_page'] = {"page" : "login.html", "title" : "Login"}
     return render_template('login.html', title='Login', xlat=session['xlat'])
 
@@ -161,10 +161,28 @@ def check_password():
             if bcrypt.hashpw(password.encode('utf-8'), user.pw) == user.pw:
                 # password was correct.  create a session variable with the userid of the current user to signify that the user has logged in.
                 session['userid'] = userid
+                return redirect('/')
+            else:
+                # password was not correct.  re-route to login page.
+                return render_template('badlogin.html', title='Incorrect Login', xlat=session['xlat'])
 
-                # if the user changes the language on a page of than the main page,
+@app.route('/check_pw0', methods=['POST'])
+def check_password0():
+    userid = request.form['userid']
+    password = request.form['password']
 
+    sql1 = "select * from users where userid = $1"
+    qry1 = db.query(sql1, userid)
 
+    if len(qry1.namedresult()) == 0:
+        # user does not exist; re-route to signup page.
+        return redirect('/signup')
+    else:
+        # user exists; continue checking password
+        for user in qry1.namedresult():
+            if bcrypt.hashpw(password.encode('utf-8'), user.pw) == user.pw:
+                # password was correct.  create a session variable with the userid of the current user to signify that the user has logged in.
+                session['userid'] = userid
                 return redirect('/')
             else:
                 # password was not correct.  re-route to login page.
@@ -187,18 +205,9 @@ def process_rma():
         lname = request.form['lname']
         phone = request.form['phone']
         email = request.form['email']
-        # sn = request.form['sn']
+
         prob = request.form['prob']
         notes = request.form['notes']
-
-        print customer
-        print fname
-        print lname
-        print phone
-        print email
-        # print sn
-        print prob
-        print notes
 
         # find the customer id whose customer name was selected
         sql1 = "select id from customers where cname = $1"
@@ -211,22 +220,6 @@ def process_rma():
         qry2 = db.query(sql2)
 
         return render_template('rma.html', title='RMA', xlat=session['xlat'])
-
-
-
-
-        # if len(qry1.namedresult()) == 1:
-        #     # username is already taken.  redirect user to an error page
-        #     return render_template('tryagain.html', title='Create User', xlat=session['xlat'])
-        # else:
-        #     # need to create the new user and direct the user to login.  encrypt the password
-        #     print password
-        #     binary_pw = password.encode('utf-8')
-        #     print binary_pw
-        #     hashed = bcrypt.hashpw(binary_pw, bcrypt.gensalt())
-        #     sql2 = "insert into users (userid, fname, lname, email, pw) values (" + quoted(userid) + comma + quoted(fname) + comma + quoted(lname) + comma + quoted(email) + comma + quoted(hashed) + ");"
-        #     qry2 = db.query(sql2)
-        #     return redirect('/login')
 
     except Exception, e:
         print "unable to create new rma in /rma"
@@ -241,57 +234,19 @@ def process_fa():
         rma_num = request.form['rma_num_select'][:6]
         serial_num = request.form['serial_num']
         rcvd_date = request.form['received']
-        # trouble_shooting = request.form['trouble_shooting']
-        # repair = request.form['repair']
         ship_date = request.form['shipped']
         suspect_part_num = request.form['suspect_part_num']
         notes = request.form['notes']
-        # root_cause = request.form['root_cause']
         root_cause2 = request.form['root_cause2']
-        # print rma_num
-        # print serial_num
-        # print rcvd_date
-        # print trouble_shooting
-        # print repair
-        # print ship_date
-        # print suspect_part_num
-        print root_cause2
-
-        # need to get the root ID that corresponds to the root cause that was entered.
-
-        # # find the customer id whose customer name was selected
-        # sql1 = "select id from customers where cname = $1"
-        # qry1 = db.query(sql1, customer)
-        #
-        # # convert the postgreSQL format of the customer ID [Row(id=1)] to a simple integer via dictresult()...
-        # cust_id = qry1.dictresult()[0]['id']
-
-        # sql1 = "select id from xlat where en = root_cause2"
         qry2 = db.query("select id from xlat where en = $1", root_cause2)
         root_id = qry2.dictresult()[0]['id']
         print root_id
-
-
-
-
-
-
-        # sql1 = "INSERT INTO fa(rma_no, ts_pct, rep_pct, ship_date, root_id, suspect_pn, rcvd_date) VALUES(" + str(rma_num) + comma + str(trouble_shooting + comma + str(repair) + comma + str(ship_date) + comma + str(root_cause) + comma + str(suspect_part_num) + comma + str(rcvd_date) + ")"
-        # print sql1
-        # qry1 = db.query(sql1)
-        # db.query_formatted('INSERT INTO fa(rma_no, ts_pct, rep_pct, ship_date, root_id, suspect_pn, rcvd_date) VALUES(%d(rma_num), %d(trouble_shooting), %d(repair), %d(ship_date), %d(repair), %d(suspect_part_num), %d(rcvd_date)')
-        # db.query('INSERT INTO fa(rma_no, ts_pct, rep_pct, ship_date, root_id, suspect_pn, rcvd_date) VALUES($1, $2, $3, $4, $5, $6, $7)', rma_num, trouble_shooting, repair, ship_date,  root_cause, suspect_part_num, rcvd_date )
         db.query('INSERT INTO fa(rma_no, ship_date, root_id, suspect_pn, rcvd_date, sn, notes) VALUES($1, $2, $3, $4, $5, $6, $7)', rma_num, ship_date, root_id, suspect_part_num, rcvd_date, serial_num, notes)
 
         # convert the postgreSQL format of the customer ID [Row(id=1)] to a simple integer via dictresult()...
         # cust_id = qry1.dictresult()[0]['id']
 
-        # sql2 = "insert into rma(fname, lname, email, prob, sn, cust_id, phone) VALUES(" + quoted(fname) + comma + quoted(lname) + comma + quoted(email) + comma + quoted(prob) + comma + str(sn) + comma + str(cust_id) + comma + quoted(phone) + ")"
-        # qry2 = db.query(sql2)
-
         return render_template('fa_closed.html', title='Failure Analysis Closed', xlat=session['xlat'])
-
-
 
     except Exception, e:
         print "unable to create new failure analysis in /fa"
@@ -299,25 +254,13 @@ def process_fa():
         return "Error %s" % traceback.format_exc()
         return redirect('/')
 
-
-
 @app.route('/analysis')
 def analysis():
     session['last_page'] = {"page" : "analysis.html", "title" : "Failure Analysis"}
 
-    # session['xlat'] = dict(qry1.namedresult())
-    #
-    # # return render_template('xlat.html', title='Translate Test', xlat_rows=dict(qry1.namedresult()))
-    # # this was the original
-    # return render_template('main.html', title='Uberkraft', xlat=session['xlat'])
-
     sql1="select rma_info from v_rma_dropdown"
     qry1 = db.query(sql1)
     print qry1.namedresult()
-
-    # session['xlat'] = dict(qry1.namedresult())
-
-    # session['rma_info'] = dict(qry1.namedresult())
 
     return render_template('analysis.html', title='RMA', xlat=session['xlat'], rma_info=qry1.dictresult())
 
@@ -366,21 +309,22 @@ def search():
     return render_template('search_results.html', title='Show Search Results', search_results = search_results.namedresult())
 
 
-# @app.route('/add_follow', methods=['POST'])
-# def add_follow():
-#
-#     user_to_follow = request.form['user_to_follow']
-#     logged_in_user = session['userid']
-#
-#     sql = "insert into follows (follower_id, leader_id) values ((select id from users where users.handle = " + quoted(logged_in_user)+ "), (select id from users where users.handle = " + quoted(user_to_follow)+ "));"
-#
-#     try:
-#         db.query(sql)
-#         print "follow table was updated"
-#         return redirect('/profile')
-#     except Exception, e:
-#         print "unique constraint violated; follow table not updated"
-#         return redirect('/profile')
+@app.route('/graph')
+def graph():
+    session['last_page'] = {"page" : "graph.html", "title" : "Graph"}
+    return render_template('graph.html', title='Graph', xlat=session['xlat'])
+
+
+@app.route('/db_total_by_rootid', methods=['POST'])
+def db_total_by_rootid():
+    sql1="select en, count(root_id) as total from xlat join fa on xlat.id = fa.root_id group by en order by total desc, en"
+    qry1=db.query(sql1)
+    print qry1.dictresult()
+    print qry1.namedresult()
+
+    # return render_template('search_results.html', title='Show Search Results', search_results = search_results.namedresult())
+    return render_template('bar_stacked.html', title='Stacked Bar', search_results = qry1.namedresult(), xlat=session['xlat'])
+    # return render_template('fa_closed.html', title='Failure Analysis Closed', xlat=session['xlat'])
 
 app.secret_key = 'CSF686CCF85C6FRTCHQDBJDXHBHC1G478C86GCFTDCR'
 
