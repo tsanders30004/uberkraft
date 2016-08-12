@@ -245,9 +245,9 @@ def process_fa():
         # repair = request.form['repair']
         ship_date = request.form['shipped']
         suspect_part_num = request.form['suspect_part_num']
-        root_cause = request.form['root_cause']
         notes = request.form['notes']
-
+        # root_cause = request.form['root_cause']
+        root_cause2 = request.form['root_cause2']
         # print rma_num
         # print serial_num
         # print rcvd_date
@@ -255,14 +255,33 @@ def process_fa():
         # print repair
         # print ship_date
         # print suspect_part_num
-        # print root_cause
+        print root_cause2
+
+        # need to get the root ID that corresponds to the root cause that was entered.
+
+        # # find the customer id whose customer name was selected
+        # sql1 = "select id from customers where cname = $1"
+        # qry1 = db.query(sql1, customer)
+        #
+        # # convert the postgreSQL format of the customer ID [Row(id=1)] to a simple integer via dictresult()...
+        # cust_id = qry1.dictresult()[0]['id']
+
+        # sql1 = "select id from xlat where en = root_cause2"
+        qry2 = db.query("select id from xlat where en = $1", root_cause2)
+        root_id = qry2.dictresult()[0]['id']
+        print root_id
+
+
+
+
+
 
         # sql1 = "INSERT INTO fa(rma_no, ts_pct, rep_pct, ship_date, root_id, suspect_pn, rcvd_date) VALUES(" + str(rma_num) + comma + str(trouble_shooting + comma + str(repair) + comma + str(ship_date) + comma + str(root_cause) + comma + str(suspect_part_num) + comma + str(rcvd_date) + ")"
         # print sql1
         # qry1 = db.query(sql1)
         # db.query_formatted('INSERT INTO fa(rma_no, ts_pct, rep_pct, ship_date, root_id, suspect_pn, rcvd_date) VALUES(%d(rma_num), %d(trouble_shooting), %d(repair), %d(ship_date), %d(repair), %d(suspect_part_num), %d(rcvd_date)')
         # db.query('INSERT INTO fa(rma_no, ts_pct, rep_pct, ship_date, root_id, suspect_pn, rcvd_date) VALUES($1, $2, $3, $4, $5, $6, $7)', rma_num, trouble_shooting, repair, ship_date,  root_cause, suspect_part_num, rcvd_date )
-        db.query('INSERT INTO fa(rma_no, ship_date, root_id, suspect_pn, rcvd_date, sn, notes) VALUES($1, $2, $3, $4, $5, $6, $7)', rma_num, ship_date,  root_cause, suspect_part_num, rcvd_date, serial_num, notes)
+        db.query('INSERT INTO fa(rma_no, ship_date, root_id, suspect_pn, rcvd_date, sn, notes) VALUES($1, $2, $3, $4, $5, $6, $7)', rma_num, ship_date, root_id, suspect_part_num, rcvd_date, serial_num, notes)
 
         # convert the postgreSQL format of the customer ID [Row(id=1)] to a simple integer via dictresult()...
         # cust_id = qry1.dictresult()[0]['id']
@@ -270,7 +289,7 @@ def process_fa():
         # sql2 = "insert into rma(fname, lname, email, prob, sn, cust_id, phone) VALUES(" + quoted(fname) + comma + quoted(lname) + comma + quoted(email) + comma + quoted(prob) + comma + str(sn) + comma + str(cust_id) + comma + quoted(phone) + ")"
         # qry2 = db.query(sql2)
 
-        return render_template('rma.html', title='RMA', xlat=session['xlat'])
+        return render_template('fa_closed.html', title='Failure Analysis Closed', xlat=session['xlat'])
 
 
 

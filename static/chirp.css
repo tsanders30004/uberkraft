@@ -86,3 +86,10 @@ td {
 .center {
      text-align: center;
 }
+.root_cause_radio {
+     border: 1px solid black;
+     padding: 1em;
+}
+.rad_btn {
+     padding-bottom: 0.25em;
+}
