@@ -113,6 +113,7 @@ def signup():
 
 @app.route('/create_user', methods=['POST'])
 def create_user():
+    session['last_page'] = {"page" : "signup.html", "title" : "Sign Up"}
     try:
         userid      = request.form['userid']
         password    = request.form['password']
@@ -191,7 +192,6 @@ def check_password0():
 @app.route('/rma')
 def rma():
     session['last_page'] = {"page" : "rma.html", "title" : "RMA"}
-
     sql1="select cname from customers order by cname"
     qry1 = db.query(sql1)
 
@@ -320,11 +320,35 @@ def g_rootcause():
     session['last_page'] = {"page" : "g_rootcause.html", "title" : "Root Cause Statistics"}
     return render_template('g_rootcause.html', title='Root Cause Statistics', xlat=session['xlat'])
 
+@app.route('/g_partno')
+def g_partno():
+    session['last_page'] = {"page" : "g_partno.html", "title" : "Part Number Statistics"}
+    return render_template('g_partno.html', title='Part Number Statistics', xlat=session['xlat'])
+
+
 @app.route('/data_routecause', methods=['POST'])
 def data_routecause():
-    sql1="select en, count(root_id) as total from xlat join fa on xlat.id = fa.root_id group by en order by total desc, en"
+    # sql1="select en, count(root_id) as total from xlat join fa on xlat.id = fa.root_id group by en order by total desc, en"
+
+    try:
+        if len(session['lang']) == 0:
+            print "language not defined...  assume english"
+            lang = "en"
+        elif session['lang'] == "de":
+            lang = "de"
+        else:
+            lang = "en"
+    except Exception, e:
+        print "error with language assignment.  assuming english"
+        lang = "en"
+
+    if lang == "en":
+        sql1="select en, count(root_id) as total from xlat join fa on xlat.id = fa.root_id group by en order by total desc, en"
+    else:
+        sql1="select de as en, count(root_id) as total from xlat join fa on xlat.id = fa.root_id group by de order by total desc, de"   # 'de as en' is needed to make the translation on the graph work.
+
     qry1=db.query(sql1)
-    # print qry1.dictresult()
+    print qry1.dictresult()
     # print qry1.dictresult()[0]
     # print qry1.dictresult()[0]['total']
     # print qry1.dictresult()[0]['en']
@@ -333,14 +357,45 @@ def data_routecause():
     # print qry1.listfields()
     # print qry1.getresult()
     # print qry1.getresult()
-    print "***********"
+    # print "***********"
+    print jsonify(qry1.dictresult())
     return jsonify(qry1.dictresult())
-    print ', '.join([d['en'] for d in qry1.dictresult()])
-    print "***********"
+    # print ', '.join([d['en'] for d in qry1.dictresult()])
+    # print "***********"
     # print qry1.array_to_json()
     # return (qry1.namedresult()) ///  caused HTTP error 500
     # return "abc"
     # return ', '.join([d['en'] for d in qry1.dictresult()])
+
+
+@app.route('/data_partno', methods=['POST'])
+def data_partno():
+
+    try:
+        if len(session['lang']) == 0:
+            print "language not defined...  assume english"
+            lang = "en"
+        elif session['lang'] == "de":
+            lang = "de"
+        else:
+            lang = "en"
+    except Exception, e:
+        print "error with language assignment.  assuming english"
+        lang = "en"
+
+    if lang == "en":
+        sql1="select en as desc, count(fa.suspect_pn) as total from xlat join xlat_pn on xlat.id = xlat_pn.xlat_id join fa on xlat_pn.pn = fa.suspect_pn group by en order by count(fa.suspect_pn) desc"
+
+    else:
+        sql1="select de as desc, count(fa.suspect_pn) as total from xlat join xlat_pn on xlat.id = xlat_pn.xlat_id join fa on xlat_pn.pn = fa.suspect_pn group by de order by count(fa.suspect_pn) desc"
+
+    qry1=db.query(sql1)
+    print qry1.dictresult()
+    print jsonify(qry1.dictresult())
+    return jsonify(qry1.dictresult())
+
+
+
 
 
 @app.route('/db_total_by_rootid', methods=['POST'])

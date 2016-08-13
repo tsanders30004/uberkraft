@@ -2,7 +2,7 @@
 <html>
 
 <head>
-     <title>{{xlat.graph_rootcause}}</title>
+     <title>{{xlat.graph_partno}}</title>
      <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
      <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.1/Chart.bundle.js"></script>
      <style>
@@ -32,11 +32,11 @@
 
      jQuery.ajax({
           type:     "POST",
-          url:      "/data_routecause",
+          url:      "/data_partno",
           success:  function(sql_data){
 
                for (i=0; i<sql_data.length; i++) {
-                    my_labels.push(sql_data[i].en);
+                    my_labels.push(sql_data[i].desc);
                     my_data.push(sql_data[i].total);
                }
 
@@ -70,7 +70,7 @@
           labels: my_labels,
           datasets: [{
                // label: 'Failures by Root Cause',
-               label: '{{xlat.graph_rootcause}}',
+               label: '{{xlat.graph_partno}}',
                backgroundColor: "rgba(220,220,220,0.5)",
                data: my_data
           }]
@@ -84,7 +84,7 @@
                options: {
                     title:{
                          display:true,
-                         text:"{{xlat.graph_rootcause}}"
+                         text:"{{xlat.graph_partno}}"
                     },
                     tooltips: {
                          mode: 'label'

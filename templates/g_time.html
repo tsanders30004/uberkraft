@@ -30,15 +30,20 @@
      my_labels = [];
      my_data = [];
 
+
+
      jQuery.ajax({
           type:     "POST",
-          url:      "/data_routecause",
+          url:      "/data_time",
           success:  function(sql_data){
 
                for (i=0; i<sql_data.length; i++) {
                     my_labels.push(sql_data[i].en);
                     my_data.push(sql_data[i].total);
                }
+
+               console.log(sql_data);
+               console.log(my_labels);
 
                $.each(barChartData.datasets, function(i, dataset) {
                     dataset.backgroundColor = 'rgba(' + randomColorFactor() + ',' + randomColorFactor() + ',' + randomColorFactor() + ',.7)';

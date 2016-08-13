@@ -1,14 +1,15 @@
 {% extends "layout.html" %}
 {% block body %}
 
-<h1>Graph</h1>
+
 <div class="row">
      <div class="col-xs-3">
           <p>&nbsp;</p>
      </div>
      <div class="col-xs-6">
+          <h1>{{xlat.graph}}</h1>
           <form action="/db_total_by_rootid" method="POST">
-               <button type="submit" class="btn btn-warning">Graph</button>
+               <button type="submit" class="btn btn-warning">{{xlat.graph_show}}</button>
           </form>
      </div>
      <div class="col-xs-3">
