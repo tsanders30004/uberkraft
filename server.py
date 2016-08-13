@@ -87,13 +87,13 @@ def de():
 
 @app.route('/login')
 def login():
-    session['last_page'] = {"page" : "login.html", "title" : "Login"}
+    # session['last_page'] = {"page" : "login.html", "title" : "Login"}
     return render_template('login.html', title='Login', xlat=session['xlat'])
 
-@app.route('/login0')
-def login0():
-    session['last_page'] = {"page" : "login.html", "title" : "Login"}
-    return render_template('login.html', title='Login', xlat=session['xlat'])
+# @app.route('/login0')
+# def login0():
+#     session['last_page'] = {"page" : "login.html", "title" : "Login"}
+#     return render_template('login.html', title='Login', xlat=session['xlat'])
 
 @app.route('/logout')
 def logout():
@@ -162,36 +162,45 @@ def check_password():
             if bcrypt.hashpw(password.encode('utf-8'), user.pw) == user.pw:
                 # password was correct.  create a session variable with the userid of the current user to signify that the user has logged in.
                 session['userid'] = userid
-                return redirect('/')
+                # return redirect('/')
+                return render_template(session['last_page']['page'], title=session['last_page']['title'], xlat=session['xlat'])
             else:
                 # password was not correct.  re-route to login page.
                 return render_template('badlogin.html', title='Incorrect Login', xlat=session['xlat'])
 
-@app.route('/check_pw0', methods=['POST'])
-def check_password0():
-    userid = request.form['userid']
-    password = request.form['password']
-
-    sql1 = "select * from users where userid = $1"
-    qry1 = db.query(sql1, userid)
-
-    if len(qry1.namedresult()) == 0:
-        # user does not exist; re-route to signup page.
-        return redirect('/signup')
-    else:
-        # user exists; continue checking password
-        for user in qry1.namedresult():
-            if bcrypt.hashpw(password.encode('utf-8'), user.pw) == user.pw:
-                # password was correct.  create a session variable with the userid of the current user to signify that the user has logged in.
-                session['userid'] = userid
-                return redirect('/')
-            else:
-                # password was not correct.  re-route to login page.
-                return render_template('badlogin.html', title='Incorrect Login', xlat=session['xlat'])
+# @app.route('/check_pw0', methods=['POST'])
+# def check_password0():
+#     userid = request.form['userid']
+#     password = request.form['password']
+#
+#     sql1 = "select * from users where userid = $1"
+#     qry1 = db.query(sql1, userid)
+#
+#     if len(qry1.namedresult()) == 0:
+#         # user does not exist; re-route to signup page.
+#         return redirect('/signup')
+#     else:
+#         # user exists; continue checking password
+#         for user in qry1.namedresult():
+#             if bcrypt.hashpw(password.encode('utf-8'), user.pw) == user.pw:
+#                 # password was correct.  create a session variable with the userid of the current user to signify that the user has logged in.
+#                 session['userid'] = userid
+#                 return redirect('/')
+#             else:
+#                 # password was not correct.  re-route to login page.
+#                 return render_template('badlogin.html', title='Incorrect Login', xlat=session['xlat'])
 
 @app.route('/rma')
 def rma():
     session['last_page'] = {"page" : "rma.html", "title" : "RMA"}
+
+    try:
+        userid = session['userid']
+        print userid
+    except Exception, e:
+        print 'not logged in accessing rma - redirecting to login page.'
+        return redirect('/login')
+
     sql1="select cname from customers order by cname"
     qry1 = db.query(sql1)
 
@@ -257,6 +266,13 @@ def process_fa():
 @app.route('/analysis')
 def analysis():
     session['last_page'] = {"page" : "analysis.html", "title" : "Failure Analysis"}
+
+    try:
+        userid = session['userid']
+        print userid
+    except Exception, e:
+        print 'not logged in accessing analysis - redirecting to login page.'
+        return redirect('/login')
 
     sql1="select rma_info from v_rma_dropdown"
     qry1 = db.query(sql1)
