@@ -19,64 +19,72 @@
      <![endif]-->
 </head>
 <body>
-     <nav class="navbar navbar-default" style="background-color: rgb(0, 166, 206);">
-          <div class="container-fluid">
 
-               <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#defaultNavbar1"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
-                    <a class="navbar-brand" href="/profile"><img src="../static/hv3.png" width="75" height="75" style="margin-top: -0.45em;"></a>
-               </div>
-
-               <div class="collapse navbar-collapse" id="defaultNavbar1">
-                    <ul class="nav navbar-nav">
-                         <li><a href="/login"><p class="nav_text">{{xlat.login}}</p></a></li>
-                         <li><a href="/rma"><p class="nav_text">{{xlat.rma_create}}</p></a></li>
-                         <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><p class="nav_text">{{xlat.failure_analysis}}<span class="caret"></span></p></a>
-                              <ul class="dropdown-menu" role="menu" style="background-color: white;">
-                                   <li><a href="/analysis"><p class="nav_dd_text">{{xlat.failure_anal}}</p></a></li>
-                                   <li><a href="/g_rootcause"><p class="nav_dd_text">{{xlat.graph_rootcause}}</p></a></li>
-                                   <li><a href="/g_partno"><p class="nav_dd_text">{{xlat.graph_partno}}</p></a></li>
-
-                              </ul>
-                         </li>
-                         <li><a href="/logout"><p class="nav_text">{{xlat.logout}}</p></a></li>
-                         <li><a href="/signup"><p class="nav_text">{{xlat.signup}}</p></a></li>
-                    </ul>
-
-                    <div id="lang" class="navbar-form navbar-right">
-                         <form class="navbar-form navbar-right" role="search" action="/search" method="POST">
-                              <div class="form-group">
-                                   <input type="text" class="form-control" placeholder="Search" name="search_str" required>
-                              </div>
-                              <button type="submit" class="btn btn-default">{{xlat.submit}}</button>
-                         </form>
-
-                         <form class="navbar-form navbar-right" action="/en" method="POST"><button class="btn btn-warning" type="submit">English</button></form>
-                         <form class="navbar-form navbar-right" action="/de" method="POST"><button class="btn btn-warning" type="submit">Deutsch</button></form>
-
-
-                    </div>
-                    <!-- /.navbar-collapse -->
-               </div>
-               <!-- /.container-fluid -->
+     <div style="background-color: rgb(0, 166, 206); border: 3px solid #444444;">
+          <nav class="navbar navbar-default" style="background-color: rgb(0, 166, 206); border: 1px solid rgb(0, 166, 206);">
+               <a class="navbar-brand" href="/profile"><img src="../static/hv3.png" width="70" height="70" style="margin-top: -0.45em;"></a>
           </nav>
 
-          <!-- MAIN CONTENT -->
-          <div class="container">
-               {% block body %}{% endblock %}
+          <nav class="navbar navbar-default" style="background-color: rgb(0, 166, 206); border: 1px solid rgb(0, 166, 206);">
+               <div class="container-fluid">
 
-               <!-- FOOTER -->
-               <div class="row">
-                    <hr>
-                    <div class="text-center col-md-6 col-md-offset-3">
-                         <h4>Überkraft </h4>
-                         <p>Copyright &copy; 2016 &middot; All Rights Reserved &middot; <a href="http://web-caffeine.com/" target="_blank">Web Caffeine</a></p>
+                    <div class="navbar-header">
+                         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#defaultNavbar1"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+                         <!-- <a class="navbar-brand" href="/profile"><img src="../static/hv3.png" width="75" height="75" style="margin-top: -0.45em;"></a> -->
+                    </div>
+
+                    <div class="collapse navbar-collapse" id="defaultNavbar1">
+                         <ul class="nav navbar-nav">
+                              <!-- <li><a class="navbar-brand" href="/profile"><img src="../static/hv3.png" width="75" height="75" style="margin-top: -0.45em;"></a></li> -->
+                              <li><a href="/login"><p class="nav_text">{{xlat.login}}</p></a></li>
+                              <li><a href="/rma"><p class="nav_text">{{xlat.rma_create}}</p></a></li>
+                              <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><p class="nav_text">{{xlat.failure_analysis}}<span class="caret"></span></p></a>
+                                   <ul class="dropdown-menu" role="menu" style="background-color: white;">
+                                        <li><a href="/analysis"><p class="nav_dd_text">{{xlat.failure_anal}}</p></a></li>
+                                        <li><a href="/g_rootcause"><p class="nav_dd_text">{{xlat.graph_rootcause}}</p></a></li>
+                                        <li><a href="/g_partno"><p class="nav_dd_text">{{xlat.graph_partno}}</p></a></li>
+
+                                   </ul>
+                              </li>
+                              <li><a href="/logout"><p class="nav_text">{{xlat.logout}}</p></a></li>
+                              <li><a href="/signup"><p class="nav_text">{{xlat.signup}}</p></a></li>
+                         </ul>
+
+                         <div id="lang" class="navbar-form navbar-right">
+                              <form class="navbar-form navbar-right" role="search" action="/search" method="POST">
+                                   <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="Search" name="search_str" required>
+                                   </div>
+                                   <button type="submit" class="btn btn-default">{{xlat.submit}}</button>
+                              </form>
+
+                              <form class="navbar-form navbar-right" action="/en" method="POST"><button class="btn btn-warning" type="submit">English</button></form>
+                              <form class="navbar-form navbar-right" action="/de" method="POST"><button class="btn btn-warning" type="submit">Deutsch</button></form>
+
+
+                         </div>
+
                     </div>
                </div>
-          </div>
+          </nav>
+     </div>
 
-          <!-- Script Files ************************************************************************************************* -->
-          <script src="../static/jquery.js"></script>
-          <script src="../static/bootstrap.min.js"></script>
-     </body>
-     </html>
+     <!-- MAIN CONTENT -->
+     <div class="container">
+          {% block body %}{% endblock %}
+
+          <!-- FOOTER -->
+          <div class="row">
+               <hr>
+               <div class="text-center col-md-6 col-md-offset-3">
+                    <h4>Überkraft </h4>
+                    <p>Copyright &copy; 2016 &middot; All Rights Reserved &middot; <a href="http://web-caffeine.com/" target="_blank">Web Caffeine</a></p>
+               </div>
+          </div>
+     </div>
+
+     <!-- Script Files ************************************************************************************************* -->
+     <script src="../static/jquery.js"></script>
+     <script src="../static/bootstrap.min.js"></script>
+</body>
+</html>
