@@ -133,6 +133,13 @@ td {
      }
 }
 
+/*div {
+     border: 1px solid black;
+}*/
+
+.btn-width {
+     width: 6em;
+}
 
 /*#dropdown_background, dropdown_background:hover {
      background-color: rgb(0, 103, 207);
