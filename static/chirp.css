@@ -71,15 +71,8 @@ body {
      border: 1px solid  rgb(102, 102, 102);
      background-color: #CCCCCC;
 }
-.nav_text {
-     color: #EFEFEF;
-     padding-top: 0;
-     padding-bottom: 0;
-}
-.nav_text:hover {
-     font-weight: bold;
-     color: white;
-}
+
+
 td {
      padding: 0.5em;
 }
@@ -93,3 +86,72 @@ td {
 .rad_btn {
      padding-bottom: 0.25em;
 }
+
+.navbar-default .navbar-nav > .open > a,
+.navbar-default .navbar-nav > .open > a:hover,
+.navbar-default .navbar-nav > .open > a:focus {
+     background-color: rgb(0, 166, 206);
+}
+
+.nav_text {
+     color: #DEDEDE;
+     padding-top: 0;
+     padding-bottom: 0;
+     font-size: 1.1em;
+     font-weight: 500;
+}
+
+/* styling for desktop nav menu */
+@media only screen and (min-width: 768px) {
+     .nav_dd_text {
+          font-size: 1.1em;
+          color: rgb(0, 166, 206);
+          padding-left: 1em;
+     }
+     .nav_dd_text:hover {
+          color: #555555;
+          font-size: 1.1em;
+     }
+}
+
+/* styling for mobile nav menu */
+@media only screen and (max-width: 767px) {
+     .nav_dd_text {
+          font-size: 1.1em;
+          color: rgb(0, 166, 206);
+          padding-left: 1em;
+     }
+     .nav_dd_text:hover {
+          font-size: 1.1em;
+          color: #555555;
+     }
+     .nav_bg_color {
+          background-color: white;
+     }
+}
+
+
+/*#dropdown_background, dropdown_background:hover {
+     background-color: rgb(0, 103, 207);
+     border: 1px solid white;
+}*/
+
+/*.dd_hover:hover {
+     color: rgb(0, 103, 207);
+     font-weight: normal;
+}*/
+
+/*@media only screen and (max-width: 767px) {
+
+     body {
+          background-color: lightblue;
+     }
+     .dd_hover:hover {
+          color: white;
+          font-weight: normal;
+     }
+}*/
+
+/*#dropdown_background, dropdown_background:hover {
+     border: 1px solid white;
+}*/

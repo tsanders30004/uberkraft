@@ -29,11 +29,18 @@
                <!-- Collect the nav links, forms, and other content for toggling -->
                <div class="collapse navbar-collapse" id="defaultNavbar1">
                     <ul class="nav navbar-nav">
-                         <li><a href="/signup"><p class="nav_text">{{xlat.signup}}</p><span class="sr-only">(current)</span></a></li>
                          <li><a href="/login"><p class="nav_text">{{xlat.login}}</p></a></li>
-                         <li><a href="/profile"><p class="nav_text">Profile</p></a></li>
-                         <li><a href="/timeline"><p class="nav_text">{{xlat.contact}}</p></a></li>
+                         <li><a href="/rma"><p class="nav_text">{{xlat.rma_create}}</p></a></li>
+                         <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><p class="nav_text">{{xlat.failure_analysis}}<span class="caret"></span></p></a>
+                                   <ul class="dropdown-menu" role="menu" style="background-color: white;">
+                                        <li><a href="/analysis"><p class="nav_dd_text">{{xlat.failure_anal}}</p></a></li>
+                                        <li><a href="/g_rootcause"><p class="nav_dd_text">{{xlat.graph_rootcause}}</p></a></li>
+                                        <li><a href="/g_partno"><p class="nav_dd_text">{{xlat.graph_partno}}</p></a></li>
+
+                                   </ul>
+                         </li>
                          <li><a href="/logout"><p class="nav_text">{{xlat.logout}}</p></a></li>
+                         <li><a href="/signup"><p class="nav_text">{{xlat.signup}}</p></a></li>
                     </ul>
 
                     <form class="navbar-form navbar-right" role="search" action="/search" method="POST">

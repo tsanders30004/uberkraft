@@ -24,6 +24,18 @@ def like_percent(s):
 
 comma = ","
 
+def login_status():
+    try:
+        if len(session['user']) == 0:
+            print 'user is logged out'
+            return 'logged_out'
+        else:
+            print 'user is logged in'
+            return 'logged_in'
+    except Exception, e:
+        print 'user is logged out'
+        return 'logged_out'
+
 @app.route('/')
 def home():
     try:
@@ -90,16 +102,22 @@ def login():
     # session['last_page'] = {"page" : "login.html", "title" : "Login"}
     return render_template('login.html', title='Login', xlat=session['xlat'])
 
+@app.route('/logout')
+def logout():
+    # session['last_page'] = {"page" : "login.html", "title" : "Login"}
+    session['userid'] = ''
+    return redirect('/')
+
 # @app.route('/login0')
 # def login0():
 #     session['last_page'] = {"page" : "login.html", "title" : "Login"}
 #     return render_template('login.html', title='Login', xlat=session['xlat'])
 
-@app.route('/logout')
-def logout():
-    session['last_page'] = {"page" : "logout.html", "title" : "Logout"}
-    session['userid'] = ""
-    return render_template('login.html', title='Login')
+# @app.route('/logout')
+# def logout():
+#     session['last_page'] = {"page" : "logout.html", "title" : "Logout"}
+#     session['userid'] = ""
+#     return render_template('login.html', title='Login')
 
 @app.route('/signup')
 def signup():
@@ -194,11 +212,7 @@ def check_password():
 def rma():
     session['last_page'] = {"page" : "rma.html", "title" : "RMA"}
 
-    try:
-        userid = session['userid']
-        print userid
-    except Exception, e:
-        print 'not logged in accessing rma - redirecting to login page.'
+    if login_status() == 'logged_out':
         return redirect('/login')
 
     sql1="select cname from customers order by cname"
@@ -267,11 +281,7 @@ def process_fa():
 def analysis():
     session['last_page'] = {"page" : "analysis.html", "title" : "Failure Analysis"}
 
-    try:
-        userid = session['userid']
-        print userid
-    except Exception, e:
-        print 'not logged in accessing analysis - redirecting to login page.'
+    if login_status() == 'logged_out':
         return redirect('/login')
 
     sql1="select rma_info from v_rma_dropdown"
@@ -325,11 +335,14 @@ def search():
     return render_template('search_results.html', title='Show Search Results', search_results = search_results.namedresult())
 
 
-@app.route('/graph')
+@app.route('/trends')
 def graph():
-    session['last_page'] = {"page" : "graph.html", "title" : "Graph"}
-    return render_template('graph.html', title='Graph', xlat=session['xlat'])
+    session['last_page'] = {"page" : "trends.html", "title" : "Trends"}
 
+    if login_status() == 'logged_out':
+        return redirect('/login')
+
+    return render_template('trends.html', title='Graph', xlat=session['xlat'])
 
 @app.route('/g_rootcause')
 def g_rootcause():
