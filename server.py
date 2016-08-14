@@ -24,6 +24,24 @@ def like_percent(s):
 
 comma = ","
 
+def show_debug_info(pg):
+    print '********************************************************************************'
+    print 'from page ' + pg + ':'
+    try:
+        print '   userid =    ' + session['userid']
+    except Exception, e:
+        print '   userid    = UNDEFINED'
+
+    try:
+        print '   lang =      ' + session['lang']
+    except Exception, e:
+        print '   lang      = UNDEFINED'
+
+    try:
+        print '   last_page = ' + session['last_page']
+    except Exception, e:
+        print '   last_page = UNDEFINED'
+
 def login_status():
     try:
         if len(session['user']) == 0:
@@ -38,37 +56,44 @@ def login_status():
 
 @app.route('/')
 def home():
+    show_debug_info('/')
+    # session['last_page'] = {"page" : "main.html", "title" : "Home"}
+
     try:
         if len(session['lang']) == 0:
-            print "language not defined...  assume english"
+            # print "language not defined...  assume english"
+            session['lang'] = "en"
             lang = "en"
         elif session['lang'] == "de":
+            session['lang'] = "de"
             lang = "de"
         else:
+            session['lang'] = "en"
             lang = "en"
     except Exception, e:
-        print "error with language assignment.  assuming english"
+        # print "error with language assignment.  assuming english"
         lang = "en"
 
-    print "langauge = " + lang
+    # print "langauge = " + lang
 
     sql1= "select key, " + lang + " from xlat"
-    print sql1
+    # print sql1
     qry1 = db.query(sql1)
-    print(dict(qry1.namedresult()))
+    # print(dict(qry1.namedresult()))
     session['xlat'] = dict(qry1.namedresult())
 
     return render_template('main.html', title='Uberkraft', xlat=session['xlat'])
 
 @app.route('/en', methods=['POST'])
 def en():
+    show_debug_info('/en')
     session['lang'] = "en"
     lang = "en"
-    print (lang)
+    # print (lang)
     sql1= "select key, " + lang + " from xlat"
-    print sql1
+    # print sql1
     qry1 = db.query(sql1)
-    print(dict(qry1.namedresult()))
+    # print(dict(qry1.namedresult()))
     session['xlat'] = dict(qry1.namedresult())
 
     try:
@@ -81,13 +106,14 @@ def en():
 
 @app.route('/de', methods=['POST'])
 def de():
+    show_debug_info('/de')
     session['lang'] = "de"
     lang = "de"
-    print (lang)
+    # print (lang)
     sql1= "select key, " + lang + " from xlat"
-    print sql1
+    # print sql1
     qry1 = db.query(sql1)
-    print(dict(qry1.namedresult()))
+    # print(dict(qry1.namedresult()))
     session['xlat'] = dict(qry1.namedresult())
     try:
         if session['last_page']['page']:
@@ -99,39 +125,32 @@ def de():
 
 @app.route('/login')
 def login():
+    show_debug_info('/login')
     # session['last_page'] = {"page" : "login.html", "title" : "Login"}
+
+    session['userid'] = ''
     return render_template('login.html', title='Login', xlat=session['xlat'])
 
 @app.route('/logout')
 def logout():
-    # session['last_page'] = {"page" : "login.html", "title" : "Login"}
+    show_debug_info('/logout')
+    # session['last_page'] = {"page" : "logout.html", "title" : "Logout"}
+
     session['userid'] = ''
     return redirect('/')
 
-# @app.route('/login0')
-# def login0():
-#     session['last_page'] = {"page" : "login.html", "title" : "Login"}
-#     return render_template('login.html', title='Login', xlat=session['xlat'])
-
-# @app.route('/logout')
-# def logout():
-#     session['last_page'] = {"page" : "logout.html", "title" : "Logout"}
-#     session['userid'] = ""
-#     return render_template('login.html', title='Login')
-
 @app.route('/signup')
 def signup():
-    # record signup.html as the last page visited
-    session['last_page'] = {"page" : "signup.html", "title" : "Sign Up"}
-    # temp = session['last_page']
-    print session['last_page']['title']
+    show_debug_info('/signup')
+    # session['last_page'] = {"page" : "signup.html", "title" : "Register"}
 
-    # return render_template('signup.html', title='Sign Up', xlat=session['xlat'])
     return render_template(session['last_page']['page'], title=session['last_page']['title'], xlat=session['xlat'])
 
 @app.route('/create_user', methods=['POST'])
 def create_user():
+    show_debug_info('/create_user')
     session['last_page'] = {"page" : "signup.html", "title" : "Sign Up"}
+
     try:
         userid      = request.form['userid']
         password    = request.form['password']
@@ -141,7 +160,6 @@ def create_user():
 
         # check to see if user id already exists
         sql1 = "select userid from users where userid = $1"
-        print sql1
         qry1 = db.query(sql1, userid)
 
         if len(qry1.namedresult()) == 1:
@@ -165,6 +183,9 @@ def create_user():
 
 @app.route('/check_pw', methods=['POST'])
 def check_password():
+    show_debug_info('/check_pw')
+    # session['last_page'] = {"page" : "login.html", "title" : "Login"}
+
     userid = request.form['userid']
     password = request.form['password']
 
@@ -180,36 +201,17 @@ def check_password():
             if bcrypt.hashpw(password.encode('utf-8'), user.pw) == user.pw:
                 # password was correct.  create a session variable with the userid of the current user to signify that the user has logged in.
                 session['userid'] = userid
-                # return redirect('/')
-                return render_template(session['last_page']['page'], title=session['last_page']['title'], xlat=session['xlat'])
+                if session['last_page']['page'] == 'signup.html':
+                    return render_template('main.html', title='Uberkraft', xlat=session['xlat'])
+                else:
+                    return render_template(session['last_page']['page'], title=session['last_page']['title'], xlat=session['xlat'])
             else:
                 # password was not correct.  re-route to login page.
                 return render_template('badlogin.html', title='Incorrect Login', xlat=session['xlat'])
 
-# @app.route('/check_pw0', methods=['POST'])
-# def check_password0():
-#     userid = request.form['userid']
-#     password = request.form['password']
-#
-#     sql1 = "select * from users where userid = $1"
-#     qry1 = db.query(sql1, userid)
-#
-#     if len(qry1.namedresult()) == 0:
-#         # user does not exist; re-route to signup page.
-#         return redirect('/signup')
-#     else:
-#         # user exists; continue checking password
-#         for user in qry1.namedresult():
-#             if bcrypt.hashpw(password.encode('utf-8'), user.pw) == user.pw:
-#                 # password was correct.  create a session variable with the userid of the current user to signify that the user has logged in.
-#                 session['userid'] = userid
-#                 return redirect('/')
-#             else:
-#                 # password was not correct.  re-route to login page.
-#                 return render_template('badlogin.html', title='Incorrect Login', xlat=session['xlat'])
-
 @app.route('/rma')
 def rma():
+    show_debug_info('/rma')
     session['last_page'] = {"page" : "rma.html", "title" : "RMA"}
 
     if login_status() == 'logged_out':
@@ -222,6 +224,9 @@ def rma():
 
 @app.route('/process_rma', methods=['POST'])
 def process_rma():
+    show_debug_info('/process_rma')
+    session['last_page'] = {"page" : "rma.html", "title" : "RMA"}
+
     try:
         customer = request.form['customer']
         fname = request.form['fname']
@@ -253,6 +258,9 @@ def process_rma():
 
 @app.route('/process_fa', methods=['POST'])
 def process_fa():
+    show_debug_info('/process_fa')
+    session['last_page'] = {"page" : "analysis.html", "title" : "Failure Analysis"}
+
     try:
         rma_num = request.form['rma_num_select'][:6]
         serial_num = request.form['serial_num']
@@ -279,6 +287,7 @@ def process_fa():
 
 @app.route('/analysis')
 def analysis():
+    show_debug_info('/analysis')
     session['last_page'] = {"page" : "analysis.html", "title" : "Failure Analysis"}
 
     if login_status() == 'logged_out':
@@ -292,7 +301,9 @@ def analysis():
 
 @app.route('/search', methods=['POST'])
 def search():
+    show_debug_info('/search')
     session['last_page'] = {"page" : "search.html", "title" : "Search"}
+
     search_list = request.form['search_str'].split()
 
     userid = session['userid']
@@ -335,29 +346,35 @@ def search():
     return render_template('search_results.html', title='Show Search Results', search_results = search_results.namedresult())
 
 
-@app.route('/trends')
-def graph():
-    session['last_page'] = {"page" : "trends.html", "title" : "Trends"}
-
-    if login_status() == 'logged_out':
-        return redirect('/login')
-
-    return render_template('trends.html', title='Graph', xlat=session['xlat'])
+# @app.route('/trends')
+# def graph():
+#     show_debug_info('/graph')
+#     session['last_page'] = {"page" : "trends.html", "title" : "Trends"}
+#
+#     if login_status() == 'logged_out':
+#         return redirect('/login')
+#
+#     return render_template('trends.html', title='Graph', xlat=session['xlat'])
 
 @app.route('/g_rootcause')
 def g_rootcause():
+    show_debug_info('/g_rootcause')
     session['last_page'] = {"page" : "g_rootcause.html", "title" : "Root Cause Statistics"}
+
     return render_template('g_rootcause.html', title='Root Cause Statistics', xlat=session['xlat'])
 
 @app.route('/g_partno')
 def g_partno():
+    show_debug_info('/g_partno')
     session['last_page'] = {"page" : "g_partno.html", "title" : "Part Number Statistics"}
+
     return render_template('g_partno.html', title='Part Number Statistics', xlat=session['xlat'])
 
 
 @app.route('/data_routecause', methods=['POST'])
 def data_routecause():
-    # sql1="select en, count(root_id) as total from xlat join fa on xlat.id = fa.root_id group by en order by total desc, en"
+    show_debug_info('/data_routecause')
+    session['last_page'] = {"page" : "g_rootcause.html", "title" : "Root Cause"}
 
     try:
         if len(session['lang']) == 0:
@@ -377,28 +394,12 @@ def data_routecause():
         sql1="select de as en, count(root_id) as total from xlat join fa on xlat.id = fa.root_id group by de order by total desc, de"   # 'de as en' is needed to make the translation on the graph work.
 
     qry1=db.query(sql1)
-    print qry1.dictresult()
-    # print qry1.dictresult()[0]
-    # print qry1.dictresult()[0]['total']
-    # print qry1.dictresult()[0]['en']
-    # print qry1.namedresult()
-    # print qry1.getresult()
-    # print qry1.listfields()
-    # print qry1.getresult()
-    # print qry1.getresult()
-    # print "***********"
-    print jsonify(qry1.dictresult())
     return jsonify(qry1.dictresult())
-    # print ', '.join([d['en'] for d in qry1.dictresult()])
-    # print "***********"
-    # print qry1.array_to_json()
-    # return (qry1.namedresult()) ///  caused HTTP error 500
-    # return "abc"
-    # return ', '.join([d['en'] for d in qry1.dictresult()])
-
 
 @app.route('/data_partno', methods=['POST'])
 def data_partno():
+    show_debug_info('/data_partno')
+    session['last_page'] = {"page" : "g_partno.html", "title" : "Part Number"}
 
     try:
         if len(session['lang']) == 0:
@@ -419,23 +420,20 @@ def data_partno():
         sql1="select de as desc, count(fa.suspect_pn) as total from xlat join xlat_pn on xlat.id = xlat_pn.xlat_id join fa on xlat_pn.pn = fa.suspect_pn group by de order by count(fa.suspect_pn) desc"
 
     qry1=db.query(sql1)
-    print qry1.dictresult()
-    print jsonify(qry1.dictresult())
+
     return jsonify(qry1.dictresult())
 
-
-
-
-
-@app.route('/db_total_by_rootid', methods=['POST'])
-def db_total_by_rootid():
-    sql1="select en, count(root_id) as total from xlat join fa on xlat.id = fa.root_id group by en order by total desc, en"
-    qry1=db.query(sql1)
-    print qry1.dictresult()
-    print qry1.namedresult()
+# @app.route('/db_total_by_rootid', methods=['POST'])
+# def db_total_by_rootid():
+#     show_debug_info('/db_total_by_rootid')
+#     session['last_page'] = {"page" : "analysis.html", "title" : "Failure Analysis"}
+#     sql1="select en, count(root_id) as total from xlat join fa on xlat.id = fa.root_id group by en order by total desc, en"
+#     qry1=db.query(sql1)
+#     print qry1.dictresult()
+#     print qry1.namedresult()
 
     # return render_template('search_results.html', title='Show Search Results', search_results = search_results.namedresult())
-    return render_template('bar_stacked.html', title='Stacked Bar', search_results = qry1.namedresult(), xlat=session['xlat'])
+    # return render_template('bar_stacked.html', title='Stacked Bar', search_results = qry1.namedresult(), xlat=session['xlat'])
     # return render_template('fa_closed.html', title='Failure Analysis Closed', xlat=session['xlat'])
 
 app.secret_key = 'CSF686CCF85C6FRTCHQDBJDXHBHC1G478C86GCFTDCR'
