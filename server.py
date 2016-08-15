@@ -226,7 +226,7 @@ def check_password():
                         # session['login_route'] = ''
                         print 'password was correct; rendering rma.html'
                         # return render_template('rma.html', title='RMA', xlat=session['xlat'], clist=qry1.dictresult())
-                        return redirect('/rma')
+                        return render_template('analysis.html', title='RMA', xlat=session['xlat'], rma_info=qry1.dictresult())
                     elif session['login_route'] == '/analysis':
                         # session['login_route'] = ''
                         return render_template('analysis.html', title='RMA', xlat=session['xlat'], rma_info=qry1.dictresult())
