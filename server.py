@@ -24,9 +24,22 @@ def like_percent(s):
 
 comma = ","
 
+def login_status():
+    if session.get('userid'):
+        if len(session['userid']) == 0:
+            return False
+        else:
+            return True
+    else:
+        return False
+
 def show_debug_info(pg):
     print '********************************************************************************'
     print 'from page ' + pg + ':'
+
+    print 'login status:'
+    print login_status()
+
     try:
         print '   userid      = ' + session['userid']
     except Exception, e:
@@ -47,17 +60,7 @@ def show_debug_info(pg):
     except Exception, e:
         print '   login_route = UNDEFINED'
 
-def login_status():
-    try:
-        if len(session['user']) == 0:
-            print 'user is logged out'
-            return 'logged_out'
-        else:
-            print 'user is logged in'
-            return 'logged_in'
-    except Exception, e:
-        print 'user is logged out'
-        return 'logged_out'
+    print '********************************************************************************'
 
 def set_login_route_status(s):
     session['login_route'] = s
@@ -65,7 +68,7 @@ def set_login_route_status(s):
 
 @app.route('/')
 def home():
-    show_debug_info('/')
+    show_debug_info('/main')
     session['last_page'] = {"page" : "main.html", "title" : "Home"}
 
     try:
@@ -145,7 +148,7 @@ def logout():
     print 'logged out'
     session['userid'] = ''
 
-    set_login_route_status('/')
+    # set_login_route_status('/')
 
     session['last_page'] = {"page" : "login.html", "title" : "Login"}
     # return render_template('main.html', title='Uberkraft', xlat=dict(qry1.namedresult()))
@@ -210,13 +213,15 @@ def check_password():
         # user does not exist; re-route to signup page.
         print "need to handle non-existent user with an error page"
         session['login_route'] = ''
-        return redirect('/signup_error')
+        return redirect('/signup')
     else:
         # user exists; continue checking password
         for user in qry1.namedresult():
             if bcrypt.hashpw(password.encode('utf-8'), user.pw) == user.pw:
                 # password was correct.  create a session variable with the userid of the current user to signify that the user has logged in.
                 session['userid'] = userid
+                print 'login was successul in /check_pw...'
+                show_debug_info('/check_pw')
                 # need to route user back where they came from
                 # if session['login_route'] == '/login':
                 #     session['login_route'] = ''
@@ -225,20 +230,22 @@ def check_password():
                     if session['login_route'] == '/rma':
                         # session['login_route'] = ''
                         print 'password was correct; rendering rma.html'
-                        # return render_template('rma.html', title='RMA', xlat=session['xlat'], clist=qry1.dictresult())
-                        return render_template('analysis.html', title='RMA', xlat=session['xlat'], rma_info=qry1.dictresult())
+                        print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+                        show_debug_info('pw correct for rma page')
+                        sql1="select cname from customers order by cname"
+                        qry1 = db.query(sql1)
+                        print qry1.dictresult()
+                        return render_template('rma.html', title='RMA', xlat=session['xlat'], clist=qry1.dictresult())
+                        # return redirect('/rma')
+
                     elif session['login_route'] == '/analysis':
-                        # session['login_route'] = ''
                         return render_template('analysis.html', title='RMA', xlat=session['xlat'], rma_info=qry1.dictresult())
                     elif session['login_route'] == '/g_rootcause':
-                        # session['login_route'] = ''
                         return render_template('g_rootcause.html', title='Root Cause Statistics', xlat=session['xlat'])
                     elif session['login_route'] == '/g_partno':
-                        # session['login_route'] = ''
                         return render_template('g_partno.html', title='Part Number Statistics', xlat=session['xlat'])
                 except Exception, e:
-                    # session['login_route'] = ''
-                    return redirect('/')
+                    return render_template('main.html', title='Uberkraft', xlat=session['xlat'])
             else:
                 # password was not correct.  re-route to login page.
                 return render_template('badlogin.html', title='Incorrect Login', xlat=session['xlat'])
@@ -249,14 +256,15 @@ def rma():
     session['last_page'] = {"page" : "rma.html", "title" : "RMA"}
 
     set_login_route_status('/rma')
+    show_debug_info('/rma')
 
-    if login_status() == 'logged_out':
+    if login_status() != True:
         return redirect('/login')
 
-    print "inside /rma"
+    print "inside /rma *****"
     sql1="select cname from customers order by cname"
     qry1 = db.query(sql1)
-    print qry.dictresult()
+    print qry1.dictresult()
 
     return render_template('rma.html', title='RMA', xlat=session['xlat'], clist=qry1.dictresult())
 
@@ -285,7 +293,8 @@ def process_rma():
         sql2 = "insert into rma(fname, lname, email, prob, cust_id, phone, notes) VALUES(" + quoted(fname) + comma + quoted(lname) + comma + quoted(email) + comma + quoted(prob) + comma + str(cust_id) + comma + quoted(phone) + comma + quoted(notes) + ")"
         qry2 = db.query(sql2)
 
-        return render_template('rma.html', title='RMA', xlat=session['xlat'])
+        # return render_template('rma.html', title='RMA', xlat=session['xlat'])
+        return render_template('rma_closed.html', title='RMA Created', xlat=session['xlat'])
 
     except Exception, e:
         print "unable to create new rma in /rma"
