@@ -30,17 +30,22 @@ def show_debug_info(pg):
     try:
         print '   userid =    ' + session['userid']
     except Exception, e:
-        print '   userid    = UNDEFINED'
+        print '   userid      = UNDEFINED'
 
     try:
         print '   lang =      ' + session['lang']
     except Exception, e:
-        print '   lang      = UNDEFINED'
+        print '   lang        = UNDEFINED'
 
     try:
-        print '   last_page = ' + session['last_page']
+        print '   last_page   = ' + session['last_page']
     except Exception, e:
-        print '   last_page = UNDEFINED'
+        print '   last_page   = UNDEFINED'
+
+    try:
+        print '   login_route = ' + session['login_route']
+    except Exception, e:
+        print '   login_route = UNDEFINED'
 
 def login_status():
     try:
@@ -54,14 +59,17 @@ def login_status():
         print 'user is logged out'
         return 'logged_out'
 
+def set_login_route_status(s):
+    session['login_route'] = s
+    print 'login_route = ' + s
+
 @app.route('/')
 def home():
     show_debug_info('/')
-    # session['last_page'] = {"page" : "main.html", "title" : "Home"}
+    session['last_page'] = {"page" : "main.html", "title" : "Home"}
 
     try:
         if len(session['lang']) == 0:
-            # print "language not defined...  assume english"
             session['lang'] = "en"
             lang = "en"
         elif session['lang'] == "de":
@@ -71,10 +79,7 @@ def home():
             session['lang'] = "en"
             lang = "en"
     except Exception, e:
-        # print "error with language assignment.  assuming english"
         lang = "en"
-
-    # print "langauge = " + lang
 
     sql1= "select key, " + lang + " from xlat"
     # print sql1
@@ -126,7 +131,10 @@ def de():
 @app.route('/login')
 def login():
     show_debug_info('/login')
-    # session['last_page'] = {"page" : "login.html", "title" : "Login"}
+
+    session['last_page'] = {"page" : "login.html", "title" : "Login"}
+
+    # set_login_route_status('/login')
 
     session['userid'] = ''
     return render_template('login.html', title='Login', xlat=session['xlat'])
@@ -134,15 +142,15 @@ def login():
 @app.route('/logout')
 def logout():
     show_debug_info('/logout')
-    # session['last_page'] = {"page" : "logout.html", "title" : "Logout"}
-
+    print 'logged out'
     session['userid'] = ''
-    return redirect('/')
+    session['last_page'] = {"page" : "login.html", "title" : "Login"}
+    return render_template('main.html', title='Uberkraft', xlat=dict(qry1.namedresult()))
 
 @app.route('/signup')
 def signup():
     show_debug_info('/signup')
-    # session['last_page'] = {"page" : "signup.html", "title" : "Register"}
+    session['last_page'] = {"page" : "signup.html", "title" : "Register"}
 
     return render_template(session['last_page']['page'], title=session['last_page']['title'], xlat=session['xlat'])
 
@@ -184,7 +192,9 @@ def create_user():
 @app.route('/check_pw', methods=['POST'])
 def check_password():
     show_debug_info('/check_pw')
-    # session['last_page'] = {"page" : "login.html", "title" : "Login"}
+    session['last_page'] = {"page" : "login.html", "title" : "Login"}
+
+    # check password
 
     userid = request.form['userid']
     password = request.form['password']
@@ -194,17 +204,35 @@ def check_password():
 
     if len(qry1.namedresult()) == 0:
         # user does not exist; re-route to signup page.
-        return redirect('/signup')
+        print "need to handle non-existent user with an error page"
+        session['login_route'] = ''
+        return redirect('/signup_error')
     else:
         # user exists; continue checking password
         for user in qry1.namedresult():
             if bcrypt.hashpw(password.encode('utf-8'), user.pw) == user.pw:
                 # password was correct.  create a session variable with the userid of the current user to signify that the user has logged in.
                 session['userid'] = userid
-                if session['last_page']['page'] == 'signup.html':
-                    return render_template('main.html', title='Uberkraft', xlat=session['xlat'])
-                else:
-                    return render_template(session['last_page']['page'], title=session['last_page']['title'], xlat=session['xlat'])
+                # need to route user back where they came from
+                # if session['login_route'] == '/login':
+                #     session['login_route'] = ''
+                #     return redirect('/')
+                try:
+                    if session['login_route'] == '/rma':
+                        # session['login_route'] = ''
+                        return render_template('rma.html', title='RMA', xlat=session['xlat'], clist=qry1.dictresult())
+                    elif session['login_route'] == '/analysis':
+                        # session['login_route'] = ''
+                        return render_template('analysis.html', title='RMA', xlat=session['xlat'], rma_info=qry1.dictresult())
+                    elif session['login_route'] == '/g_rootcause':
+                        # session['login_route'] = ''
+                        return render_template('g_rootcause.html', title='Root Cause Statistics', xlat=session['xlat'])
+                    elif session['login_route'] == '/g_partno':
+                        # session['login_route'] = ''
+                        return render_template('g_partno.html', title='Part Number Statistics', xlat=session['xlat'])
+                except Exception, e:
+                    # session['login_route'] = ''
+                    return redirect('/')
             else:
                 # password was not correct.  re-route to login page.
                 return render_template('badlogin.html', title='Incorrect Login', xlat=session['xlat'])
@@ -213,6 +241,8 @@ def check_password():
 def rma():
     show_debug_info('/rma')
     session['last_page'] = {"page" : "rma.html", "title" : "RMA"}
+
+    set_login_route_status('/rma')
 
     if login_status() == 'logged_out':
         return redirect('/login')
@@ -290,6 +320,8 @@ def analysis():
     show_debug_info('/analysis')
     session['last_page'] = {"page" : "analysis.html", "title" : "Failure Analysis"}
 
+    set_login_route_status('/analysis')
+
     if login_status() == 'logged_out':
         return redirect('/login')
 
@@ -361,12 +393,22 @@ def g_rootcause():
     show_debug_info('/g_rootcause')
     session['last_page'] = {"page" : "g_rootcause.html", "title" : "Root Cause Statistics"}
 
+    set_login_route_status('/g_rootcause')
+
+    if login_status() == 'logged_out':
+        return redirect('/login')
+
     return render_template('g_rootcause.html', title='Root Cause Statistics', xlat=session['xlat'])
 
 @app.route('/g_partno')
 def g_partno():
     show_debug_info('/g_partno')
     session['last_page'] = {"page" : "g_partno.html", "title" : "Part Number Statistics"}
+
+    set_login_route_status('/g_partno')
+
+    if login_status() == 'logged_out':
+        return redirect('/login')
 
     return render_template('g_partno.html', title='Part Number Statistics', xlat=session['xlat'])
 
