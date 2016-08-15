@@ -4,7 +4,12 @@
 body {
      font-family: Verdana;
      background-color: rgb(153, 153, 153);
+     padding-left: 3em;
+     padding-right: 3em;
+     background-image: url('img/sch8e.png');
+     /*background-color: rgba(255, 255, 255, 0.7);*/
 }
+
 .light_bg {
      background-color: rgb(153, 153, 153);
 }
