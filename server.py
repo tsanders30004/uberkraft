@@ -28,7 +28,7 @@ def show_debug_info(pg):
     print '********************************************************************************'
     print 'from page ' + pg + ':'
     try:
-        print '   userid =    ' + session['userid']
+        print '   userid      = ' + session['userid']
     except Exception, e:
         print '   userid      = UNDEFINED'
 
@@ -224,7 +224,9 @@ def check_password():
                 try:
                     if session['login_route'] == '/rma':
                         # session['login_route'] = ''
-                        return render_template('rma.html', title='RMA', xlat=session['xlat'], clist=qry1.dictresult())
+                        print 'password was correct; rendering rma.html'
+                        # return render_template('rma.html', title='RMA', xlat=session['xlat'], clist=qry1.dictresult())
+                        return redirect('/rma')
                     elif session['login_route'] == '/analysis':
                         # session['login_route'] = ''
                         return render_template('analysis.html', title='RMA', xlat=session['xlat'], rma_info=qry1.dictresult())
@@ -251,8 +253,10 @@ def rma():
     if login_status() == 'logged_out':
         return redirect('/login')
 
+    print "inside /rma"
     sql1="select cname from customers order by cname"
     qry1 = db.query(sql1)
+    print qry.dictresult()
 
     return render_template('rma.html', title='RMA', xlat=session['xlat'], clist=qry1.dictresult())
 
