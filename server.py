@@ -163,6 +163,17 @@ def login():
     session['userid'] = ''
     return render_template('login.html', title='Login', xlat=session['xlat'])
 
+@app.route('/contact')
+def contact():
+    show_debug_info('/contact')
+    session['last_page'] = {"page" : "contact.html", "title" : "Contact Me"}
+    return render_template('contact.html', title='Contact Me', xlat=session['xlat'])
+
+@app.route('/send_mail', methods=['POST'])
+def send_mail():
+    #n need to do something else here...
+    return render_template('badlogin.html', title='Incorrect Login', xlat=session['xlat'])
+
 @app.route('/logout')
 def logout():
     show_debug_info('/logout')
@@ -216,6 +227,8 @@ def create_user():
         print traceback.format_exc()
         return "Error %s" % traceback.format_exc()
         return redirect('/login')
+
+
 
 @app.route('/check_pw', methods=['POST'])
 def check_password():
