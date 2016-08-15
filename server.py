@@ -104,12 +104,20 @@ def en():
     # print(dict(qry1.namedresult()))
     session['xlat'] = dict(qry1.namedresult())
 
-    try:
-        if session['last_page']['page']:
-            return render_template(session['last_page']['page'], title=session['last_page']['title'], xlat=dict(qry1.namedresult()))
-        else:
+    # try:
+    #     if session['last_page']['page']:
+    #         return render_template(session['last_page']['page'], title=session['last_page']['title'], xlat=dict(qry1.namedresult()))
+    #     else:
+    #         return render_template('main.html', title='Uberkraft', xlat=dict(qry1.namedresult()))
+    # except Exception, e:
+    #     return render_template('main.html', title='Uberkraft', xlat=dict(qry1.namedresult()))
+
+    if session.get('last_page'):
+        if session['last_page']['page'] == 'login.html':
             return render_template('main.html', title='Uberkraft', xlat=dict(qry1.namedresult()))
-    except Exception, e:
+        else:
+            return render_template(session['last_page']['page'], title=session['last_page']['title'], xlat=dict(qry1.namedresult()))
+    else:
         return render_template('main.html', title='Uberkraft', xlat=dict(qry1.namedresult()))
 
 @app.route('/de', methods=['POST'])
@@ -123,13 +131,26 @@ def de():
     qry1 = db.query(sql1)
     # print(dict(qry1.namedresult()))
     session['xlat'] = dict(qry1.namedresult())
-    try:
-        if session['last_page']['page']:
-            return render_template(session['last_page']['page'], title=session['last_page']['title'], xlat=dict(qry1.namedresult()))
-        else:
+
+
+    # try:
+    #     if session['last_page']['page']:
+    #         return render_template(session['last_page']['page'], title=session['last_page']['title'], xlat=dict(qry1.namedresult()))
+    #     else:
+    #         return render_template('main.html', title='Uberkraft', xlat=dict(qry1.namedresult()))
+    # except Exception, e:
+    #     return render_template('main.html', title='Uberkraft', xlat=dict(qry1.namedresult()))
+
+    if session.get('last_page'):
+        if session['last_page']['page'] == 'login.html':
             return render_template('main.html', title='Uberkraft', xlat=dict(qry1.namedresult()))
-    except Exception, e:
+        else:
+            return render_template(session['last_page']['page'], title=session['last_page']['title'], xlat=dict(qry1.namedresult()))
+    else:
         return render_template('main.html', title='Uberkraft', xlat=dict(qry1.namedresult()))
+
+
+
 
 @app.route('/login')
 def login():
