@@ -239,7 +239,11 @@ def check_password():
                         # return redirect('/rma')
 
                     elif session['login_route'] == '/analysis':
+                        sql1="select rma_info from v_rma_dropdown"
+                        qry1 = db.query(sql1)
+                        print qry1.namedresult()
                         return render_template('analysis.html', title='RMA', xlat=session['xlat'], rma_info=qry1.dictresult())
+
                     elif session['login_route'] == '/g_rootcause':
                         return render_template('g_rootcause.html', title='Root Cause Statistics', xlat=session['xlat'])
                     elif session['login_route'] == '/g_partno':
@@ -339,7 +343,7 @@ def analysis():
 
     set_login_route_status('/analysis')
 
-    if login_status() == 'logged_out':
+    if login_status() != True:
         return redirect('/login')
 
     sql1="select rma_info from v_rma_dropdown"
