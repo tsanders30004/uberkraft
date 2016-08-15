@@ -144,8 +144,12 @@ def logout():
     show_debug_info('/logout')
     print 'logged out'
     session['userid'] = ''
+
+    set_login_route_status('/')
+
     session['last_page'] = {"page" : "login.html", "title" : "Login"}
-    return render_template('main.html', title='Uberkraft', xlat=dict(qry1.namedresult()))
+    # return render_template('main.html', title='Uberkraft', xlat=dict(qry1.namedresult()))
+    return redirect('/')
 
 @app.route('/signup')
 def signup():
