@@ -1,0 +1,6 @@
+               customer                |rma_number|       date_created       |first_name|last_name|     email_address     |issue|open
+---------------------------------------+----------+--------------------------+----------+---------+-----------------------+-----+----
+BART / Bay Area Rapid Transit Authority|     10079|2016-08-16 14:43:35.984778|1         |1        |tsanders30004@gmail.com|1    |t   
+BART / Bay Area Rapid Transit Authority|     10080|2016-08-16 14:43:40.413182|1         |1        |tsanders30004@gmail.com|1    |t   
+BART / Bay Area Rapid Transit Authority|     10081|2016-08-16 14:43:45.190238|1         |1        |tsanders30004@gmail.com|1    |t   
+(3 rows)

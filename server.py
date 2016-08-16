@@ -401,9 +401,12 @@ def process_rma():
 
         file_text = str(db.query(sql3))
 
-        if file_text.count('\n', 0, len(file_text)) >= 3:
+        path = "text_files/"
+        filename = "rma_data.txt"
 
-            fout = open ('text_files/test_file.txt', 'w')
+        if file_text.count('\n', 0, len(file_text)) >= 5:
+
+            fout = open (path + filename, 'w')
             fout.write(file_text)
             fout.close()
 
@@ -417,8 +420,8 @@ def process_rma():
 
             msg.attach(MIMEText(body, 'plain'))
 
-            filename = "test_file.txt"
-            attachment = open("text_files/test_file.txt", "rb")
+
+            attachment = open(path + filename, "rb")
 
             part = MIMEBase('application', 'octet-stream')
             part.set_payload((attachment).read())
