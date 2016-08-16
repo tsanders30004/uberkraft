@@ -398,41 +398,41 @@ def process_rma():
         # ####################################################################################################
         # create a text file with RMA data...
         sql3 = "select cname as customer, rma.id as rma_number, rma.ts as date_created, fname as first_name, lname as last_name, email as email_address, prob as issue, ship_date is null as open from customers join rma on customers.id = rma.cust_id left join fa on rma.id = fa.rma_no where extract(year from now()) = extract(year from rma.ts) and extract(month from now()) = extract(month from rma.ts) and extract(day from now()) = extract(day from rma.ts) order by rma.ts"
+
         file_text = str(db.query(sql3))
-        print len(file_text)
-        print file_text.count('\n', 0, len(file_text))
-        print "*************"
-        # filename = 'text_files/test_file.txt'
-        fout = open ('text_files/test_file.txt', 'w')
-        fout.write(file_text)
-        fout.close()
 
-        msg = MIMEMultipart()
+        if file_text.count('\n', 0, len(file_text)) >= 3:
 
-        msg['From'] = fromaddr
-        msg['To'] = toaddr
-        msg['Subject'] = "Ueberkraft:  Daily RMA Threshold Exceeded"
+            fout = open ('text_files/test_file.txt', 'w')
+            fout.write(file_text)
+            fout.close()
 
-        body = "The number of RMA's received today has been exceeded.  Current list of RMA's is attached.\n"
+            msg = MIMEMultipart()
 
-        msg.attach(MIMEText(body, 'plain'))
+            msg['From'] = fromaddr
+            msg['To'] = toaddr
+            msg['Subject'] = "Ueberkraft:  Daily RMA Threshold Exceeded"
 
-        filename = "test_file.txt"
-        attachment = open("text_files/test_file.txt", "rb")
+            body = "The number of RMA's received today has been exceeded.  Current list of RMA's is attached.\n"
 
-        part = MIMEBase('application', 'octet-stream')
-        part.set_payload((attachment).read())
-        encoders.encode_base64(part)
-        part.add_header('Content-Disposition', "attachment; filename= %s" % filename)
+            msg.attach(MIMEText(body, 'plain'))
 
-        msg.attach(part)
+            filename = "test_file.txt"
+            attachment = open("text_files/test_file.txt", "rb")
 
-        server = smtplib.SMTP('smtp.gmail.com', 587)
-        server.starttls()
-        server.login(fromaddr, from_pw)
-        text = msg.as_string()
-        server.sendmail(fromaddr, toaddr, text)
-        server.quit()
+            part = MIMEBase('application', 'octet-stream')
+            part.set_payload((attachment).read())
+            encoders.encode_base64(part)
+            part.add_header('Content-Disposition', "attachment; filename= %s" % filename)
+
+            msg.attach(part)
+
+            server = smtplib.SMTP('smtp.gmail.com', 587)
+            server.starttls()
+            server.login(fromaddr, from_pw)
+            text = msg.as_string()
+            server.sendmail(fromaddr, toaddr, text)
+            server.quit()
 
         # return render_template('rma.html', title='RMA', xlat=session['xlat'])
         return render_template('rma_closed.html', title='RMA Created', xlat=session['xlat'])

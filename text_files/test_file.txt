@@ -15,4 +15,5 @@ BART / Bay Area Rapid Transit Authority             |     10062|2016-08-16 13:55
 BART / Bay Area Rapid Transit Authority             |     10063|2016-08-16 13:57:54.382338|9                |9        |tsanders30004@gmail.com            |2095 Monroe Dr.   |t   
 BART / Bay Area Rapid Transit Authority             |     10064|2016-08-16 14:00:15.312228|9                |9        |tsanders30004@gmail.com            |2095 Monroe Dr.   |t   
 BART / Bay Area Rapid Transit Authority             |     10065|2016-08-16 14:01:20.406437|9                |9        |tsanders30004@gmail.com            |2095 Monroe Dr.   |t   
-(15 rows)
+BART / Bay Area Rapid Transit Authority             |     10066|2016-08-16 14:08:17.60673 |l                |l        |tsanders30004@gmail.com            |2095 Monroe Dr.   |t   
+(16 rows)
