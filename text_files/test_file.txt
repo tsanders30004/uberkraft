@@ -1,0 +1,7 @@
+                      customer                      |rma_number|first_name|last_name|           email_address           |      issue       |open
+----------------------------------------------------+----------+----------+---------+-----------------------------------+------------------+----
+BART / Bay Area Rapid Transit Authority             |     10051|Tim       |Sanders  |tsanders@gmail.com                 |test              |t   
+MARTA / Metropolitan Atlanta Rapid Transit Authority|     10052|Thomas    |Doering  |thomas.doering@transtechnik-usa.com|Capacitor Exploded|t   
+MARTA / Metropolitan Atlanta Rapid Transit Authority|     10053|Thomas    |Doering  |thomas.doering@transtechnik-usa.com|Capacitor Exploded|t   
+MARTA / Metropolitan Atlanta Rapid Transit Authority|     10054|Thomas    |Doering  |thomas.doering@transtechnik-usa.com|Capacitor Exploded|t   
+(4 rows)

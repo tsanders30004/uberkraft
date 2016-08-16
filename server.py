@@ -13,6 +13,17 @@ from flask import Flask, render_template, request, redirect, session, jsonify
 
 app = Flask('MyApp')
 
+# configure email settings
+# see http://bit.ly/py-email and "Introducing Python (Bill Lubanovic, page 297) for details.
+import smtplib
+from email.MIMEMultipart import MIMEMultipart
+from email.MIMEText import MIMEText
+fromaddr = "tsanders30004@gmail.com"
+from_pw = "Langlitz2015!"
+toaddr = "tim.sanders@web-caffeine.com"
+
+
+
 def quoted(s):
     return "'" + s + "'"
 
@@ -170,9 +181,50 @@ def contact():
     return render_template('contact.html', title='Contact Me', xlat=session['xlat'])
 
 @app.route('/send_mail', methods=['POST'])
+
+# email messages must be utf-8 encoded; otherwise, email with non-ACSII (i.e., letters with umlauts) will not be sent.
+# for more information, see https://docs.python.org/2/howto/unicode.html
 def send_mail():
-    #n need to do something else here...
-    return render_template('badlogin.html', title='Incorrect Login', xlat=session['xlat'])
+    try:
+        name = request.form['name'].encode('utf-8')
+    except Exception, e:
+        name = 'UNDEFINED'
+    try:
+        from_email = request.form['email'].encode('utf-8')
+    except Exception, e:
+        from_email = 'UNDEFINED'
+    try:
+        comments = request.form['comments'].encode('utf-8')
+    except Exception, e:
+        comments = 'UNDEFINED'
+
+    msg = MIMEMultipart()
+    msg['From'] = fromaddr
+    msg['To'] = toaddr
+    msg['Subject'] = "Ueberkraft:  Message from Ueberkraft Visitor"
+
+    body = "Message from " + fromaddr + "\n" + comments
+    msg.attach(MIMEText(body, 'plain'))
+
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.starttls()
+    server.login(fromaddr, from_pw)
+    text = msg.as_string()
+    server.sendmail(fromaddr, toaddr, text)
+    server.quit()
+
+    # create a text file with RMA data...
+    sql1 = "select cname as customer, rma.id as rma_number, fname as first_name, lname as last_name, email as email_address, prob as issue, ship_date is null as open from customers join rma on customers.id = rma.cust_id left join fa on rma.id = fa.rma_no where extract(year from now()) = extract(year from rma.ts) and extract(month from now()) = extract(month from rma.ts) and extract(day from now()) = extract(day from rma.ts) order by rma.ts"
+    file_text = str(db.query(sql1))
+    print len(file_text)
+    print file_text.count('\n', 0, len(file_text))
+
+
+    print "*************"
+    fout = open ('text_files/test_file.txt', 'w')
+    fout.write(file_text)
+
+    return render_template('email_sent.html', title='Thank You', xlat=session['xlat'])
 
 @app.route('/logout')
 def logout():
@@ -227,8 +279,6 @@ def create_user():
         print traceback.format_exc()
         return "Error %s" % traceback.format_exc()
         return redirect('/login')
-
-
 
 @app.route('/check_pw', methods=['POST'])
 def check_password():
