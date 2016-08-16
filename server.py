@@ -21,9 +21,20 @@ from email.MIMEText import MIMEText
 from email.MIMEBase import MIMEBase
 from email import encoders
 
-fromaddr = "tsanders30004@gmail.com"
-from_pw = "Langlitz2015!"
-toaddr = "tim.sanders@web-caffeine.com"
+
+
+import os
+from dotenv import load_dotenv, find_dotenv
+load_dotenv(find_dotenv())
+
+# fromaddr = "tsanders30004@gmail.com"
+# from_pw = "Langlitz2015!"
+# toaddr = "tim.sanders@web-caffeine.com"
+
+fromaddr = os.environ.get('FROM_EMAIL_ADDR')
+from_pw = os.environ.get('FROM_EMAIL_PW')
+toaddr = os.environ.get('TO_EMAIL_ADDR')
+
 
 
 
@@ -201,6 +212,7 @@ def send_mail():
     except Exception, e:
         comments = 'UNDEFINED'
 
+
     msg = MIMEMultipart()
     msg['From'] = fromaddr
     msg['To'] = toaddr
@@ -350,6 +362,8 @@ def rma():
     set_login_route_status('/rma')
     show_debug_info('/rma')
 
+
+
     if login_status() != True:
         return redirect('/login')
 
@@ -364,6 +378,8 @@ def rma():
 def process_rma():
     show_debug_info('/process_rma')
     session['last_page'] = {"page" : "rma.html", "title" : "RMA"}
+
+
 
     try:
         customer = request.form['customer']
