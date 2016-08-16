@@ -18,6 +18,9 @@ app = Flask('MyApp')
 import smtplib
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
+from email.MIMEBase import MIMEBase
+from email import encoders
+
 fromaddr = "tsanders30004@gmail.com"
 from_pw = "Langlitz2015!"
 toaddr = "tim.sanders@web-caffeine.com"
@@ -214,15 +217,16 @@ def send_mail():
     server.quit()
 
     # create a text file with RMA data...
-    sql1 = "select cname as customer, rma.id as rma_number, fname as first_name, lname as last_name, email as email_address, prob as issue, ship_date is null as open from customers join rma on customers.id = rma.cust_id left join fa on rma.id = fa.rma_no where extract(year from now()) = extract(year from rma.ts) and extract(month from now()) = extract(month from rma.ts) and extract(day from now()) = extract(day from rma.ts) order by rma.ts"
-    file_text = str(db.query(sql1))
-    print len(file_text)
-    print file_text.count('\n', 0, len(file_text))
+    # sql1 = "select cname as customer, rma.id as rma_number, fname as first_name, lname as last_name, email as email_address, prob as issue, ship_date is null as open from customers join rma on customers.id = rma.cust_id left join fa on rma.id = fa.rma_no where extract(year from now()) = extract(year from rma.ts) and extract(month from now()) = extract(month from rma.ts) and extract(day from now()) = extract(day from rma.ts) order by rma.ts"
+    # file_text = str(db.query(sql1))
+    # print len(file_text)
+    # print file_text.count('\n', 0, len(file_text))
+    #
+    # print "*************"
+    # fout = open ('text_files/test_file.txt', 'w')
+    # fout.write(file_text)
 
 
-    print "*************"
-    fout = open ('text_files/test_file.txt', 'w')
-    fout.write(file_text)
 
     return render_template('email_sent.html', title='Thank You', xlat=session['xlat'])
 
@@ -381,8 +385,58 @@ def process_rma():
         sql2 = "insert into rma(fname, lname, email, prob, cust_id, phone, notes) VALUES(" + quoted(fname) + comma + quoted(lname) + comma + quoted(email) + comma + quoted(prob) + comma + str(cust_id) + comma + quoted(phone) + comma + quoted(notes) + ")"
         qry2 = db.query(sql2)
 
+        # create a text file with RMA data...
+        # sql1 = "select cname as customer, rma.id as rma_number, fname as first_name, lname as last_name, email as email_address, prob as issue, ship_date is null as open from customers join rma on customers.id = rma.cust_id left join fa on rma.id = fa.rma_no where extract(year from now()) = extract(year from rma.ts) and extract(month from now()) = extract(month from rma.ts) and extract(day from now()) = extract(day from rma.ts) order by rma.ts"
+        # file_text = str(db.query(sql1))
+        # print len(file_text)
+        # print file_text.count('\n', 0, len(file_text))
+        #
+        # print "*************"
+        # fout = open ('text_files/test_file.txt', 'w')
+        # fout.write(file_text)
+
+        # ####################################################################################################
+        # create a text file with RMA data...
+        sql3 = "select cname as customer, rma.id as rma_number, rma.ts as date_created, fname as first_name, lname as last_name, email as email_address, prob as issue, ship_date is null as open from customers join rma on customers.id = rma.cust_id left join fa on rma.id = fa.rma_no where extract(year from now()) = extract(year from rma.ts) and extract(month from now()) = extract(month from rma.ts) and extract(day from now()) = extract(day from rma.ts) order by rma.ts"
+        file_text = str(db.query(sql3))
+        print len(file_text)
+        print file_text.count('\n', 0, len(file_text))
+        print "*************"
+        # filename = 'text_files/test_file.txt'
+        fout = open ('text_files/test_file.txt', 'w')
+        fout.write(file_text)
+        fout.close()
+
+        msg = MIMEMultipart()
+
+        msg['From'] = fromaddr
+        msg['To'] = toaddr
+        msg['Subject'] = "Ueberkraft:  Daily RMA Threshold Exceeded"
+
+        body = "The number of RMA's received today has been exceeded.  Current list of RMA's is attached.\n"
+
+        msg.attach(MIMEText(body, 'plain'))
+
+        filename = "test_file.txt"
+        attachment = open("text_files/test_file.txt", "rb")
+
+        part = MIMEBase('application', 'octet-stream')
+        part.set_payload((attachment).read())
+        encoders.encode_base64(part)
+        part.add_header('Content-Disposition', "attachment; filename= %s" % filename)
+
+        msg.attach(part)
+
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(fromaddr, from_pw)
+        text = msg.as_string()
+        server.sendmail(fromaddr, toaddr, text)
+        server.quit()
+
         # return render_template('rma.html', title='RMA', xlat=session['xlat'])
         return render_template('rma_closed.html', title='RMA Created', xlat=session['xlat'])
+        # ####################################################################################################
 
     except Exception, e:
         print "unable to create new rma in /rma"
