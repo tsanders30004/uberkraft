@@ -1,10 +1,17 @@
-               customer                |rma_number|       date_created       |first_name|last_name|     email_address     |issue|open
----------------------------------------+----------+--------------------------+----------+---------+-----------------------+-----+----
-BART / Bay Area Rapid Transit Authority|     10079|2016-08-16 14:43:35.984778|1         |1        |tsanders30004@gmail.com|1    |t   
-BART / Bay Area Rapid Transit Authority|     10080|2016-08-16 14:43:40.413182|1         |1        |tsanders30004@gmail.com|1    |t   
-BART / Bay Area Rapid Transit Authority|     10081|2016-08-16 14:43:45.190238|1         |1        |tsanders30004@gmail.com|1    |t   
-BART / Bay Area Rapid Transit Authority|     10082|2016-08-16 15:08:12.450307|env       |env      |env@env.com            |env  |t   
-BART / Bay Area Rapid Transit Authority|     10083|2016-08-16 15:12:13.669525|env       |env      |env@env.com            |env  |t   
-BART / Bay Area Rapid Transit Authority|     10084|2016-08-16 15:12:23.561087|env2      |env      |env@env.com            |env  |t   
-BART / Bay Area Rapid Transit Authority|     10085|2016-08-16 15:14:34.115345|env2      |env      |env@env.com            |env  |t   
-(7 rows)
+               customer                |rma_number|       date_created       |            first_name             |last_name|       email_address        |     issue     |open
+---------------------------------------+----------+--------------------------+-----------------------------------+---------+----------------------------+---------------+----
+BART / Bay Area Rapid Transit Authority|     10079|2016-08-16 14:43:35.984778|1                                  |1        |tsanders30004@gmail.com     |1              |t   
+BART / Bay Area Rapid Transit Authority|     10080|2016-08-16 14:43:40.413182|1                                  |1        |tsanders30004@gmail.com     |1              |t   
+BART / Bay Area Rapid Transit Authority|     10081|2016-08-16 14:43:45.190238|1                                  |1        |tsanders30004@gmail.com     |1              |t   
+BART / Bay Area Rapid Transit Authority|     10082|2016-08-16 15:08:12.450307|env                                |env      |env@env.com                 |env            |t   
+BART / Bay Area Rapid Transit Authority|     10083|2016-08-16 15:12:13.669525|env                                |env      |env@env.com                 |env            |t   
+BART / Bay Area Rapid Transit Authority|     10084|2016-08-16 15:12:23.561087|env2                               |env      |env@env.com                 |env            |t   
+BART / Bay Area Rapid Transit Authority|     10085|2016-08-16 15:14:34.115345|env2                               |env      |env@env.com                 |env            |t   
+BART / Bay Area Rapid Transit Authority|     10086|2016-08-16 15:21:21.681836|new email password                 |test     |test@gmail.com              |test           |t   
+BART / Bay Area Rapid Transit Authority|     10087|2016-08-16 15:22:47.230617|new password                       |l        |l@l.com                     |l              |t   
+BART / Bay Area Rapid Transit Authority|     10088|2016-08-16 15:26:17.293511|1                                  |1        |e@e.com                     |2              |t   
+BART / Bay Area Rapid Transit Authority|     10089|2016-08-16 15:28:51.399203|test from rma after password change|test     |tsanders30004@gmail.com     |test           |t   
+BART / Bay Area Rapid Transit Authority|     10090|2016-08-16 15:30:10.945543|test from chrome after password    |test     |tim.sanders@web-caffeine.com|2095 Monroe Dr.|t   
+BART / Bay Area Rapid Transit Authority|     10091|2016-08-16 15:34:21.479518|test from chrome after password    |test     |tim.sanders@web-caffeine.com|2095 Monroe Dr.|t   
+BART / Bay Area Rapid Transit Authority|     10092|2016-08-16 15:36:03.259968|l                                  |l        |l@l.com                     |l              |t   
+(14 rows)

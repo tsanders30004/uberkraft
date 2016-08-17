@@ -156,6 +156,7 @@ def de():
     qry1 = db.query(sql1)
     # print(dict(qry1.namedresult()))
     session['xlat'] = dict(qry1.namedresult())
+    print dict(qry1.namedresult())
 
 
     # try:
