@@ -2,41 +2,46 @@
 {% block body %}
 <h1 class="center">{{xlat.failure_anal}}</h1>
 <h3 class="center">{{xlat.analysis_enter_data}}</h3>
+<br>
 
 <div class="row">
 
      <form action="/process_fa" method="POST">
 
-          <div class="form-group"><label for="rma_num">{{xlat.rma_num}}:</label>
-               <select class="form-control"  name="rma_num_select">
-                    {% for dropdown_val in rma_info %}
-                    <option value="{{dropdown_val.rma_info}}">{{dropdown_val.rma_info}}</option>
-                    {% endfor %}
-               </select>
+          <div class="col-md-6">
+               <div class="form-group"><label for="rma_num">{{xlat.rma_num}}:</label>
+                    <select class="form-control"  name="rma_num_select">
+                         {% for dropdown_val in rma_info %}
+                         <option value="{{dropdown_val.rma_info}}">{{dropdown_val.rma_info}}</option>
+                         {% endfor %}
+                    </select>
+               </div>
+
+               <div class="form-group"><label for="serial_num">      {{xlat.serial_num}}:</label>            <input type="number"      class="form-control" name="serial_num"            required></div>
+               <div class="form-group"><label for="received">        {{xlat.received}}:</label>              <input type="date"        class="form-control" name="received"              required></div>
+               <div class="form-group"><label for="shipped">         {{xlat.shipped}}:</label>               <input type="date"        class="form-control" name="shipped"               required></div>
+               <div class="form-group"><label for="suspect_part_num">{{xlat.suspect_part_num}}:</label>      <input type="number"      class="form-control" name="suspect_part_num"      required></div>
+               <div class="form-group"><label for="notes">           {{xlat.notes}}:</label>                 <input type="text"        class="form-control" name="notes"                 required></div>
           </div>
-
-          <div class="form-group"><label for="serial_num">      {{xlat.serial_num}}:</label>            <input type="number"      class="form-control" name="serial_num"            required></div>
-          <div class="form-group"><label for="received">        {{xlat.received}}:</label>              <input type="date"        class="form-control" name="received"              required></div>
-          <div class="form-group"><label for="shipped">         {{xlat.shipped}}:</label>               <input type="date"        class="form-control" name="shipped"               required></div>
-          <div class="form-group"><label for="suspect_part_num">{{xlat.suspect_part_num}}:</label>      <input type="number"      class="form-control" name="suspect_part_num"      required></div>
-          <div class="form-group"><label for="notes">           {{xlat.notes}}:</label>                 <input type="text"        class="form-control" name="notes"                 required></div>
-
-          <div class="form-group root_cause_radio"><label for="root_cause2">{{xlat.root_cause}}:</label>
-               <br>
-               <p><input class="rad_btn" type="radio" name="root_cause2" value="Component Defect"> {{xlat.dispo_component}}<br></p>
-               <p><input class="rad_btn" type="radio" name="root_cause2" value="Customer Issue"> {{xlat.dispo_customer_issue}}<br></p>
-               <p><input class="rad_btn" type="radio" name="root_cause2" value="Design Defect"> {{xlat.dispo_design_defect}}<br></p>
-               <p><input class="rad_btn" type="radio" name="root_cause2" value="Excessive Input Voltage"> {{xlat.dispo_over_volgage}}<br></p>
-               <p><input class="rad_btn" type="radio" name="root_cause2" value="Manufacturing Issue"> {{xlat.dispo_mfg_issue}}<br></p>
-               <p><input class="rad_btn" type="radio" name="root_cause2" value="Operator Error"> {{xlat.dispo_operator_error}}<br></p>
-               <p><input class="rad_btn" type="radio" name="root_cause2" value="Software Defect"> {{xlat.dispo_sw}}<br></p>
-               <p><input class="rad_btn" type="radio" name="root_cause2" value="Weather / Environmental Problems"> {{xlat.dispo_weather}}<br></p>
-               <p><input class="rad_btn" type="radio" name="root_cause2" value="Workmanship Issue"> {{xlat.dispo_workmanship}}<br><br></p>
-               <p><input class="rad_btn" type="radio" name="root_cause2" value="Other"> {{xlat.dispo_dispo_other}}<br></p>
+          <div class="col-md-6">
+               <label for="root_cause2">{{xlat.root_cause}}:</label>
+               <div class="form-group root_cause_radio">
+                    <br>
+                    <p><input class="rad_btn" type="radio" name="root_cause2" value="Component Defect"> {{xlat.dispo_component}}<br></p>
+                    <p><input class="rad_btn" type="radio" name="root_cause2" value="Customer Issue"> {{xlat.dispo_customer_issue}}<br></p>
+                    <p><input class="rad_btn" type="radio" name="root_cause2" value="Design Defect"> {{xlat.dispo_design_defect}}<br></p>
+                    <p><input class="rad_btn" type="radio" name="root_cause2" value="Excessive Input Voltage"> {{xlat.dispo_over_volgage}}<br></p>
+                    <p><input class="rad_btn" type="radio" name="root_cause2" value="Manufacturing Issue"> {{xlat.dispo_mfg_issue}}<br></p>
+                    <p><input class="rad_btn" type="radio" name="root_cause2" value="Operator Error"> {{xlat.dispo_operator_error}}<br></p>
+                    <p><input class="rad_btn" type="radio" name="root_cause2" value="Software Defect"> {{xlat.dispo_sw}}<br></p>
+                    <p><input class="rad_btn" type="radio" name="root_cause2" value="Weather / Environmental Problems"> {{xlat.dispo_weather}}<br></p>
+                    <p><input class="rad_btn" type="radio" name="root_cause2" value="Workmanship Issue"> {{xlat.dispo_workmanship}}<br><br></p>
+                    <p><input class="rad_btn" type="radio" name="root_cause2" value="Other"> {{xlat.dispo_dispo_other}}<br></p>
+               </div>
           </div>
-
-          <button type="submit" class="btn btn-success">    {{xlat.submit}}</button>
-
+          <div class="col-md-12">
+               <button type="submit" class="btn btn-success">    {{xlat.submit}}</button>
+          </div>
      </form>
 
 </div>

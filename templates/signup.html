@@ -2,11 +2,12 @@
 {% block body %}
 
 <div class="row">
-     <div class="col-xs-4">
+     <br><br>
+     <div class="col-md-3">
           <p>&nbsp;</p>
      </div>
-     <div class="col-xs-4">
-          <form action="/create_user" method="POST">
+     <div class="col-md-6">
+          <form class="login_box" action="/create_user" method="POST">
                <table>
                     <tr><td><label>{{xlat.userid}}     </label></td><td><input type="text"     name="userid"       required></td></tr>
                     <tr><td><label>{{xlat.name_first}} </label></td><td><input type="text"     name="fname"        required></td></tr>
@@ -17,7 +18,7 @@
                <button class="btn btn-warning" type="submit">{{xlat.signup}}</button>
           </form>
      </div>
-     <div class="col-xs-4">
+     <div class="col-md-3">
           <p>&nbsp;</p>
      </div>
 </div>

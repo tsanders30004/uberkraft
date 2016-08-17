@@ -2,31 +2,40 @@
 {% block body %}
 <h1 class="center">{{xlat.rma_create}}</h1>
 <h3 class="center">{{xlat.rma_enter_data}}</h3>
-
-<div class="row">
-
-     <form action="/process_rma" method="POST">
-
-          <div class="form-group"><label for="rcust_num">{{xlat.customer}}:</label>
-               <select class="form-control"  name="customer">
-                    {% for one_cust in clist %}
-                    <option value="{{one_cust.cname}}" >{{one_cust.cname}}</option>
-                    {% endfor %}
-               </select>
+<form action="/process_rma" method="POST">
+     <div class="row">
+          <div class="col-md-12">
+               <div class="form-group"><label for="rcust_num">{{xlat.customer}}:</label>
+                    <select class="form-control"  name="customer">
+                         {% for one_cust in clist %}
+                         <option value="{{one_cust.cname}}" >{{one_cust.cname}}</option>
+                         {% endfor %}
+                    </select>
+               </div>
           </div>
-
-
-          <!-- <div class="form-group"><label for="customer">    {{xlat.customer}}:</label><input type="text"         class="form-control" name="customer" required>   </div> -->
-          <div class="form-group"><label for="fname">       {{xlat.name_last}}:</label><input type="text"         class="form-control" name="fname" required>      </div>
-          <div class="form-group"><label for="lname">       {{xlat.name_first}}:</label><input type="text"         class="form-control" name="lname" required>      </div>
-          <div class="form-group"><label for="phone">       {{xlat.phone}}:</label><input type="tel"         class="form-control" name="phone" required>      </div>
-          <div class="form-group"><label for="email">       {{xlat.email}}:</label><input type="email"        class="form-control" name="email" required>      </div>
-          <!-- <div class="form-group"><label for="serial_no">   {{xlat.serial_num_numeric}}:</label><input type="number"         class="form-control" name="sn" required>  </div> -->
-          <div class="form-group"><label for="issue">       {{xlat.prob_desc}}:</label><input type="text"     class="form-control" name="prob" required>      </div>
-          <div class="form-group"><label for="notes">       {{xlat.notes}}:</label><input type="text"     class="form-control" name="notes">      </div>
-
-          <button type="submit" class="btn btn-success">    {{xlat.submit}}</button>
-     </form>
-
-</div>
+     </div>
+     <div class="row">
+          <div class="col-md-6">
+               <div class="form-group"><label for="fname">{{xlat.name_last}}:</label><input type="text" class="form-control" name="fname" required></div>
+               <div class="form-group"><label for="lname">{{xlat.name_first}}:</label><input type="text" class="form-control" name="lname" required></div>
+          </div>
+          <div class="col-md-6">
+               <div class="form-group"><label for="phone">{{xlat.phone}}:</label><input type="tel" class="form-control" name="phone" required></div>
+               <div class="form-group"><label for="email">{{xlat.email}}:</label><input type="email" class="form-control" name="email" required></div>
+          </div>
+     </div>
+     <div class="row">
+          <div class="col-md-6">
+               <div class="form-group"><label for="issue">{{xlat.prob_desc}}:</label><textarea rows="5" class="form-control" name="prob" required></textarea></div>
+          </div>
+          <div class="col-md-6">
+               <div class="form-group"><label for="notes">{{xlat.notes}}:</label><textarea rows="5" class="form-control" name="notes"></textarea></div>
+          </div>
+     </div>
+     <div class="row">
+          <div class="col-md-12">
+               <button type="submit" class="btn btn-success">{{xlat.submit}}</button>
+          </div>
+     </div>
+</form>
 {% endblock %}

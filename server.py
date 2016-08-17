@@ -126,7 +126,7 @@ def en():
     sql1= "select key, " + lang + " from xlat"
     # print sql1
     qry1 = db.query(sql1)
-    # print(dict(qry1.namedresult()))
+    print(dict(qry1.namedresult()))
     session['xlat'] = dict(qry1.namedresult())
 
     # try:
@@ -176,8 +176,6 @@ def de():
         return render_template('main.html', title='Uberkraft', xlat=dict(qry1.namedresult()))
 
 
-
-
 @app.route('/login')
 def login():
     show_debug_info('/login')
@@ -188,6 +186,14 @@ def login():
 
     session['userid'] = ''
     return render_template('login.html', title='Login', xlat=session['xlat'])
+
+# @app.route('/about')
+# def about():
+#     show_debug_info('/about')
+#
+#     session['last_page'] = {"page" : "about.html", "title" : "About"}
+#
+#     return render_template('about.html', title='About', xlat=session['xlat'])
 
 @app.route('/contact')
 def contact():

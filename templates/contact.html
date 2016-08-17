@@ -1,13 +1,29 @@
 {% extends "layout.html" %}
 {% block body %}
+<h1>{{xlat.contact_me}}</h1>
+
 <form action="/send_mail" method="post">
-     <p style="font-size: 1.5em; font-weight: bold; padding: 0;">{{xlat.contact_me}}</p>
-     <p class="contact_form_label">{{xlat.name}}:</p>
-     <input class="input_box" type="text" name="name" required style="width: 100%;">
-     <p class="contact_form_label">{{xlat.email}}:</p>
-     <input class="input_box" type="email" name="email" required style="width: 100%;">
-     <p class="contact_form_label">{{xlat.comments}}:</p>
-     <textarea class="input_box" name="comments" rows="10" required style="width: 100%;" ></textarea>
-     <button class="btn btn-success" type="submit">{{xlat.send_message}}</button>
+     <div class="row">
+          <div class="col-md-6">
+               <p class="contact_form_label">{{xlat.name}}:</p>
+               <input class="input_box" type="text" name="name" required style="width: 100%;">
+          </div>
+          <div class="col-md-6">
+               <p class="contact_form_label">{{xlat.email}}:</p>
+               <input class="input_box" type="email" name="email" required style="width: 100%;">
+          </div>
+     </div>
+     <div class="row">
+          <div class="col-md-12">
+               <p class="contact_form_label">{{xlat.comments}}:</p>
+               <textarea class="input_box" name="comments" rows="10" required style="width: 100%;" ></textarea>
+          </div>
+     </div>
+     <div class="row">
+          <div class="col-md-12">
+
+               <button class="btn btn-success" type="submit">{{xlat.send_message}}</button>
+          </div>
+     </div>
 </form>
 {% endblock %}

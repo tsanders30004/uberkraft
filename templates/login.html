@@ -2,17 +2,17 @@
 {% block body %}
 <br><br><br>
 <div class="row">
-     <div class="col-xs-4">
+     <div class="col-md-3">
           <p>&nbsp;</p>
      </div>
-     <div class="col-xs-4">
+     <div class="col-md-6">
           <form class="login_box" action="/check_pw" method="POST">
                <div class="row" style="padding-bottom: 1em;"><div class="col-xs-4"><label>{{xlat.userid}}</label></div><div class="col-xs-8"><input type="text" name="userid" required></div></div>
                <div class="row" style="padding-bottom: 1em;"><div class="col-xs-4"><label>{{xlat.password}}</label></div><div class="col-xs-8"><input type="password" name="password" required></div></div>
                <div class="row" style="padding-bottom: 1em;"><div class="col-xs-4"><button type="submit" class="btn btn-warning">{{xlat.login}}</button></div><div class="col-xs-8"><p>&nbsp;</p></div></div>
           </form>
      </div>
-     <div class="col-xs-4">
+     <div class="col-md-3">
 <p>&nbsp;</p>
      </div>
 </div>

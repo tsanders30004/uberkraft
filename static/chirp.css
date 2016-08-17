@@ -167,6 +167,13 @@ td {
      padding: 1em;
      background-color: #CCCCCC;
 }
+.root_cause_radio {
+     background-color: white;
+     border-color: #252525;
+}
+.contact_form_label {
+     font-weight: 600;
+}
 /*#dropdown_background, dropdown_background:hover {
      background-color: rgb(0, 103, 207);
      border: 1px solid white;
