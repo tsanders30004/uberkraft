@@ -254,14 +254,7 @@ def create_user():
             #encrypt the password
             hashed = bcrypt.hashpw(binary_pw, bcrypt.gensalt())
 
-
-            # db.query('INSERT INTO fa(rma_no, ship_date, root_id, suspect_pn, rcvd_date, sn, notes) VALUES($1, $2, $3, $4, $5, $6, $7)', rma_num, ship_date, root_id, suspect_part_num, rcvd_date, serial_num, notes)
-            #
-            # sql2 = 'INSERT INTO users (userid, fname, lname, email, pw) values ($1, $2, $3, $4, $5)', userid, fmane, lname, email, hashed)
-            #
-            # " + quoted(userid) + comma + quoted(fname) + comma + quoted(lname) + comma + quoted(email) + comma + quoted(hashed) + ");"
-
-            db.query('INSERT INTO users (userid, fname, lname, email, pw) values ($1, $2, $3, $4, $5)', userid, fmane, lname, email, hashed))
+            db.query('INSERT INTO users (userid, fname, lname, email, pw) values ($1, $2, $3, $4, $5)', userid, fname, lname, email, hashed)
 
             return redirect('/login')
 
@@ -365,8 +358,14 @@ def process_rma():
         # convert the postgreSQL format of the customer ID [Row(id=1)] to a simple integer via dictresult()...
         cust_id = qry1.dictresult()[0]['id']
 
-        sql2 = "insert into rma(fname, lname, email, prob, cust_id, phone, notes) VALUES(" + quoted(fname) + comma + quoted(lname) + comma + quoted(email) + comma + quoted(prob) + comma + str(cust_id) + comma + quoted(phone) + comma + quoted(notes) + ")"
-        qry2 = db.query(sql2)
+
+        # db.query('INSERT INTO fa(rma_no, ship_date, root_id, suspect_pn, rcvd_date, sn, notes) VALUES($1, $2, $3, $4, $5, $6, $7)', rma_num, ship_date, root_id, suspect_part_num, rcvd_date, serial_num, notes)
+
+        # sql2 = "insert into rma(fname, lname, email, prob, cust_id, phone, notes) VALUES(" + quoted(fname) + comma + quoted(lname) + comma + quoted(email) + comma + quoted(prob) + comma + str(cust_id) + comma + quoted(phone) + comma + quoted(notes) + ")"
+        #
+        # qry2 = db.query(sql2)
+
+        db.query('INSERT INTO rma(fname, lname, email, prob, cust_id, phone, notes) VALUES($1, $2, $3, $4, $5, $6, $7)', fname, lname, email, prob, cust_id, phone, notes)
 
         sql3 = "select cname as customer, rma.id as rma_number, rma.ts as date_created, fname as first_name, lname as last_name, email as email_address, prob as issue, ship_date is null as open from customers join rma on customers.id = rma.cust_id left join fa on rma.id = fa.rma_no where extract(year from now()) = extract(year from rma.ts) and extract(month from now()) = extract(month from rma.ts) and extract(day from now()) = extract(day from rma.ts) order by rma.ts"
 
