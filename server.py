@@ -1,9 +1,8 @@
+# to redeploy:  git push heroku master
+
+# Required Import Settings
 import traceback
-
 import pg
-# db=pg.DB(dbname='uberkraft')
-
-
 import bcrypt
 
 import sys
@@ -22,20 +21,17 @@ from email.MIMEText import MIMEText
 from email.MIMEBase import MIMEBase
 from email import encoders
 
-
-
 import os
 from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv())
 
-# fromaddr = "tsanders30004@gmail.com"
-# from_pw = "Langlitz2015!"
-# toaddr = "tim.sanders@web-caffeine.com"
-
+# to and from email addresses for email handling
+# read these settings from the .env file.
 fromaddr = os.environ.get('FROM_EMAIL_ADDR')
 from_pw = os.environ.get('FROM_EMAIL_PW')
 toaddr = os.environ.get('TO_EMAIL_ADDR')
 
+# read database settings from the .env file.
 db = pg.DB(
   dbname=os.environ.get('DBNAME'),
   host=os.environ.get('DBHOST'),
@@ -43,7 +39,6 @@ db = pg.DB(
   user=os.environ.get('DBUSER'),
   passwd=os.environ.get('DBPASSWORD')
 )
-
 
 def quoted(s):
     return "'" + s + "'"
@@ -94,6 +89,7 @@ def show_debug_info(pg):
 
     print '********************************************************************************'
 
+# used for debugging
 def set_login_route_status(s):
     session['login_route'] = s
     print 'login_route = ' + s
@@ -103,6 +99,7 @@ def home():
     show_debug_info('/main')
     session['last_page'] = {"page" : "main.html", "title" : "Home"}
 
+    # set language.  default to English if not already set.
     try:
         if len(session['lang']) == 0:
             session['lang'] = "en"
@@ -117,33 +114,24 @@ def home():
         lang = "en"
 
     sql1= "select key, " + lang + " from xlat"
-    # print sql1
     qry1 = db.query(sql1)
-    # print(dict(qry1.namedresult()))
     session['xlat'] = dict(qry1.namedresult())
 
     return render_template('main.html', title='Uberkraft', xlat=session['xlat'])
 
+# create english dictionary
 @app.route('/en', methods=['POST'])
 def en():
     show_debug_info('/en')
     session['lang'] = "en"
     lang = "en"
-    # print (lang)
     sql1= "select key, " + lang + " from xlat"
-    # print sql1
     qry1 = db.query(sql1)
     print(dict(qry1.namedresult()))
+    #store dictionary in a session variable called xlat.
     session['xlat'] = dict(qry1.namedresult())
 
-    # try:
-    #     if session['last_page']['page']:
-    #         return render_template(session['last_page']['page'], title=session['last_page']['title'], xlat=dict(qry1.namedresult()))
-    #     else:
-    #         return render_template('main.html', title='Uberkraft', xlat=dict(qry1.namedresult()))
-    # except Exception, e:
-    #     return render_template('main.html', title='Uberkraft', xlat=dict(qry1.namedresult()))
-
+    # return to last page accessed before the language was changed.
     if session.get('last_page'):
         if session['last_page']['page'] == 'login.html':
             return render_template('main.html', title='Uberkraft', xlat=dict(qry1.namedresult()))
@@ -152,28 +140,18 @@ def en():
     else:
         return render_template('main.html', title='Uberkraft', xlat=dict(qry1.namedresult()))
 
+# create german dictionary
 @app.route('/de', methods=['POST'])
 def de():
     show_debug_info('/de')
     session['lang'] = "de"
     lang = "de"
-    # print (lang)
     sql1= "select key, " + lang + " from xlat"
-    # print sql1
     qry1 = db.query(sql1)
-    # print(dict(qry1.namedresult()))
     session['xlat'] = dict(qry1.namedresult())
     print dict(qry1.namedresult())
 
-
-    # try:
-    #     if session['last_page']['page']:
-    #         return render_template(session['last_page']['page'], title=session['last_page']['title'], xlat=dict(qry1.namedresult()))
-    #     else:
-    #         return render_template('main.html', title='Uberkraft', xlat=dict(qry1.namedresult()))
-    # except Exception, e:
-    #     return render_template('main.html', title='Uberkraft', xlat=dict(qry1.namedresult()))
-
+    # return to last page accessed before the language was changed.
     if session.get('last_page'):
         if session['last_page']['page'] == 'login.html':
             return render_template('main.html', title='Uberkraft', xlat=dict(qry1.namedresult()))
@@ -181,7 +159,6 @@ def de():
             return render_template(session['last_page']['page'], title=session['last_page']['title'], xlat=dict(qry1.namedresult()))
     else:
         return render_template('main.html', title='Uberkraft', xlat=dict(qry1.namedresult()))
-
 
 @app.route('/login')
 def login():
@@ -189,18 +166,8 @@ def login():
 
     session['last_page'] = {"page" : "login.html", "title" : "Login"}
 
-    # set_login_route_status('/login')
-
     session['userid'] = ''
     return render_template('login.html', title='Login', xlat=session['xlat'])
-
-# @app.route('/about')
-# def about():
-#     show_debug_info('/about')
-#
-#     session['last_page'] = {"page" : "about.html", "title" : "About"}
-#
-#     return render_template('about.html', title='About', xlat=session['xlat'])
 
 @app.route('/contact')
 def contact():
@@ -226,7 +193,6 @@ def send_mail():
     except Exception, e:
         comments = 'UNDEFINED'
 
-
     msg = MIMEMultipart()
     msg['From'] = fromaddr
     msg['To'] = toaddr
@@ -235,24 +201,13 @@ def send_mail():
     body = "Message from " + fromaddr + "\n" + comments
     msg.attach(MIMEText(body, 'plain'))
 
+    # email handling.
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.starttls()
     server.login(fromaddr, from_pw)
     text = msg.as_string()
     server.sendmail(fromaddr, toaddr, text)
     server.quit()
-
-    # create a text file with RMA data...
-    # sql1 = "select cname as customer, rma.id as rma_number, fname as first_name, lname as last_name, email as email_address, prob as issue, ship_date is null as open from customers join rma on customers.id = rma.cust_id left join fa on rma.id = fa.rma_no where extract(year from now()) = extract(year from rma.ts) and extract(month from now()) = extract(month from rma.ts) and extract(day from now()) = extract(day from rma.ts) order by rma.ts"
-    # file_text = str(db.query(sql1))
-    # print len(file_text)
-    # print file_text.count('\n', 0, len(file_text))
-    #
-    # print "*************"
-    # fout = open ('text_files/test_file.txt', 'w')
-    # fout.write(file_text)
-
-
 
     return render_template('email_sent.html', title='Thank You', xlat=session['xlat'])
 
@@ -262,10 +217,7 @@ def logout():
     print 'logged out'
     session['userid'] = ''
 
-    # set_login_route_status('/')
-
     session['last_page'] = {"page" : "login.html", "title" : "Login"}
-    # return render_template('main.html', title='Uberkraft', xlat=dict(qry1.namedresult()))
     return redirect('/')
 
 @app.route('/signup')
@@ -299,10 +251,20 @@ def create_user():
             print password
             binary_pw = password.encode('utf-8')
             print binary_pw
+            #encrypt the password
             hashed = bcrypt.hashpw(binary_pw, bcrypt.gensalt())
-            sql2 = "insert into users (userid, fname, lname, email, pw) values (" + quoted(userid) + comma + quoted(fname) + comma + quoted(lname) + comma + quoted(email) + comma + quoted(hashed) + ");"
-            qry2 = db.query(sql2)
+
+
+            # db.query('INSERT INTO fa(rma_no, ship_date, root_id, suspect_pn, rcvd_date, sn, notes) VALUES($1, $2, $3, $4, $5, $6, $7)', rma_num, ship_date, root_id, suspect_part_num, rcvd_date, serial_num, notes)
+            #
+            # sql2 = 'INSERT INTO users (userid, fname, lname, email, pw) values ($1, $2, $3, $4, $5)', userid, fmane, lname, email, hashed)
+            #
+            # " + quoted(userid) + comma + quoted(fname) + comma + quoted(lname) + comma + quoted(email) + comma + quoted(hashed) + ");"
+
+            db.query('INSERT INTO users (userid, fname, lname, email, pw) values ($1, $2, $3, $4, $5)', userid, fmane, lname, email, hashed))
+
             return redirect('/login')
+
 
     except Exception, e:
         print "unable to create new user in /create_user"
@@ -314,8 +276,6 @@ def create_user():
 def check_password():
     show_debug_info('/check_pw')
     session['last_page'] = {"page" : "login.html", "title" : "Login"}
-
-    # check password
 
     userid = request.form['userid']
     password = request.form['password']
@@ -336,10 +296,7 @@ def check_password():
                 session['userid'] = userid
                 print 'login was successul in /check_pw...'
                 show_debug_info('/check_pw')
-                # need to route user back where they came from
-                # if session['login_route'] == '/login':
-                #     session['login_route'] = ''
-                #     return redirect('/')
+
                 try:
                     if session['login_route'] == '/rma':
                         # session['login_route'] = ''
@@ -376,8 +333,6 @@ def rma():
     set_login_route_status('/rma')
     show_debug_info('/rma')
 
-
-
     if login_status() != True:
         return redirect('/login')
 
@@ -392,8 +347,6 @@ def rma():
 def process_rma():
     show_debug_info('/process_rma')
     session['last_page'] = {"page" : "rma.html", "title" : "RMA"}
-
-
 
     try:
         customer = request.form['customer']
@@ -415,18 +368,6 @@ def process_rma():
         sql2 = "insert into rma(fname, lname, email, prob, cust_id, phone, notes) VALUES(" + quoted(fname) + comma + quoted(lname) + comma + quoted(email) + comma + quoted(prob) + comma + str(cust_id) + comma + quoted(phone) + comma + quoted(notes) + ")"
         qry2 = db.query(sql2)
 
-        # create a text file with RMA data...
-        # sql1 = "select cname as customer, rma.id as rma_number, fname as first_name, lname as last_name, email as email_address, prob as issue, ship_date is null as open from customers join rma on customers.id = rma.cust_id left join fa on rma.id = fa.rma_no where extract(year from now()) = extract(year from rma.ts) and extract(month from now()) = extract(month from rma.ts) and extract(day from now()) = extract(day from rma.ts) order by rma.ts"
-        # file_text = str(db.query(sql1))
-        # print len(file_text)
-        # print file_text.count('\n', 0, len(file_text))
-        #
-        # print "*************"
-        # fout = open ('text_files/test_file.txt', 'w')
-        # fout.write(file_text)
-
-        # ####################################################################################################
-        # create a text file with RMA data...
         sql3 = "select cname as customer, rma.id as rma_number, rma.ts as date_created, fname as first_name, lname as last_name, email as email_address, prob as issue, ship_date is null as open from customers join rma on customers.id = rma.cust_id left join fa on rma.id = fa.rma_no where extract(year from now()) = extract(year from rma.ts) and extract(month from now()) = extract(month from rma.ts) and extract(day from now()) = extract(day from rma.ts) order by rma.ts"
 
         file_text = str(db.query(sql3))
@@ -434,6 +375,7 @@ def process_rma():
         path = "text_files/"
         filename = "rma_data.txt"
 
+        # need to create a email attachment if the number of creates created today >= 3.  Calculate number of requests created today by counting the number of newlines in the file; the number if requests is that number - 2.
         if file_text.count('\n', 0, len(file_text)) >= 5:
 
             fout = open (path + filename, 'w')
@@ -449,7 +391,6 @@ def process_rma():
             body = "The number of RMA's received today has been exceeded.  Current list of RMA's is attached.\n"
 
             msg.attach(MIMEText(body, 'plain'))
-
 
             attachment = open(path + filename, "rb")
 
@@ -467,16 +408,13 @@ def process_rma():
             server.sendmail(fromaddr, toaddr, text)
             server.quit()
 
-        # return render_template('rma.html', title='RMA', xlat=session['xlat'])
         return render_template('rma_closed.html', title='RMA Created', xlat=session['xlat'])
-        # ####################################################################################################
 
     except Exception, e:
         print "unable to create new rma in /rma"
         print traceback.format_exc()
         return "Error %s" % traceback.format_exc()
         return redirect('/login')
-
 
 @app.route('/process_fa', methods=['POST'])
 def process_fa():
@@ -495,9 +433,6 @@ def process_fa():
         root_id = qry2.dictresult()[0]['id']
         print root_id
         db.query('INSERT INTO fa(rma_no, ship_date, root_id, suspect_pn, rcvd_date, sn, notes) VALUES($1, $2, $3, $4, $5, $6, $7)', rma_num, ship_date, root_id, suspect_part_num, rcvd_date, serial_num, notes)
-
-        # convert the postgreSQL format of the customer ID [Row(id=1)] to a simple integer via dictresult()...
-        # cust_id = qry1.dictresult()[0]['id']
 
         return render_template('fa_closed.html', title='Failure Analysis Closed', xlat=session['xlat'])
 
@@ -523,63 +458,6 @@ def analysis():
 
     return render_template('analysis.html', title='RMA', xlat=session['xlat'], rma_info=qry1.dictresult())
 
-@app.route('/search', methods=['POST'])
-def search():
-    show_debug_info('/search')
-    session['last_page'] = {"page" : "search.html", "title" : "Search"}
-
-    search_list = request.form['search_str'].split()
-
-    userid = session['userid']
-
-    if len(userid) == 0:
-        return redirect('/login')
-
-    # create temp table to facilate search results display.  name the temp table the same as the (unique) userid so that temp tables can be created in parallel for simultaneous users
-    try:
-        sql1 = "DROP TABLE " + userid
-        db.query(sql1)
-    except Exception, e:
-        print "something went wrong trying to drop a temp table"
-        print traceback.format_exc()
-
-    try:
-        sql2 = 'CREATE TABLE "public"."' + userid + '" ("handle" varchar, "name" varchar, "chirp" varchar)'
-        db.query(sql2)
-    except Exception, e:
-        print "something went wrong trying to create a temp table"
-        print traceback.format_exc()
-
-    for n in range(len(search_list)):
-        print n
-
-        sql1 = "insert into " + userid + " select handle, fname || ' ' || lname as name, chirp from users left join chirps on users.id = chirps.chirper_id where lower(fname) like $1 or lower(lname) like $1 or lower(handle) like $1 or lower(chirp) like $1"
-        search_results = db.query(sql1, like_percent(search_list[n].lower()))
-
-        sql2 = "select distinct * from " + userid + ";"
-        search_results = db.query(sql2)
-
-    try:
-        sql1 = "DROP TABLE " + userid
-        db.query(sql1)
-    except Exception, e:
-        print "something went wrong trying to drop a temp table"
-        print traceback.format_exc()
-
-    # print search_results
-    return render_template('search_results.html', title='Show Search Results', search_results = search_results.namedresult())
-
-
-# @app.route('/trends')
-# def graph():
-#     show_debug_info('/graph')
-#     session['last_page'] = {"page" : "trends.html", "title" : "Trends"}
-#
-#     if login_status() == 'logged_out':
-#         return redirect('/login')
-#
-#     return render_template('trends.html', title='Graph', xlat=session['xlat'])
-
 @app.route('/g_rootcause')
 def g_rootcause():
     show_debug_info('/g_rootcause')
@@ -603,7 +481,6 @@ def g_partno():
         return redirect('/login')
 
     return render_template('g_partno.html', title='Part Number Statistics', xlat=session['xlat'])
-
 
 @app.route('/data_routecause', methods=['POST'])
 def data_routecause():
@@ -656,19 +533,6 @@ def data_partno():
     qry1=db.query(sql1)
 
     return jsonify(qry1.dictresult())
-
-# @app.route('/db_total_by_rootid', methods=['POST'])
-# def db_total_by_rootid():
-#     show_debug_info('/db_total_by_rootid')
-#     session['last_page'] = {"page" : "analysis.html", "title" : "Failure Analysis"}
-#     sql1="select en, count(root_id) as total from xlat join fa on xlat.id = fa.root_id group by en order by total desc, en"
-#     qry1=db.query(sql1)
-#     print qry1.dictresult()
-#     print qry1.namedresult()
-
-    # return render_template('search_results.html', title='Show Search Results', search_results = search_results.namedresult())
-    # return render_template('bar_stacked.html', title='Stacked Bar', search_results = qry1.namedresult(), xlat=session['xlat'])
-    # return render_template('fa_closed.html', title='Failure Analysis Closed', xlat=session['xlat'])
 
 app.secret_key = 'CSF686CCF85C6FRTCHQDBJDXHBHC1G478C86GCFTDCR'
 

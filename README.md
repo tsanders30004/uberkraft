@@ -1,18 +1,25 @@
-# Chirp Application
+# Überkraft
 
 ## Application Overview
-"Chirp" is a Twitter-like social-media application.
+"Überkraft” is a (fictional) German Engineering company that provides electrical equipment throughout the world, with offices in several German cities in addition to Atlanta, GA.
 
-### Major Features
+This web application is designed to serve as a Service Portal for employees of Überkraft.  Primary objectives of the application are to:
+* Function as a multi-language website.  Pages can  be displayed either English or German.
+* Collect and store repair requests in a database.
+* Provide advance warning of a possible trend in product failures by automatically sending a warning email to the Service Manager if the number of repair requests received in one day exceeds a pre-defined threshold.
+* Provide graphs which shows recurring product failures.
+
+## Technical and Implementation Details
+* The web front-end contains almost no static content.  Instead, content is stored in a postgreSQL database.  
+* The user can choose the preferred language.  The current page can be re-displayed in the required language at any time.
+* The application in designed in such a way that that changes to existing text content only requires updating the applicable rows in the database – no HTML updates are needed to change existing text.  The website need not be taken offline to do this.
+* Backend processing is coded in the Python programming language.  Routes are used in the application to direct page flow.
 * Users must be logged in to add content.
 * User data and content is stored in a postgreSQL database.
 * User passwords are encrypted before being written to the database.
 * Many pages require that the user be logged in before accessing; logic is included to manage this.
 * New users can create an account.  Logic is in place to ensure that user ID's are unique - which is also enforced in the database.
-* The profile page shows the number of "chirps" a user has issued; and the number of followees and followers.
 * Protections are used to prevent SQL injection attacks.
-* A search feature is available which will return a list of search results, including user profile data and content.
-* The search page includes a feature in which the logged in user to follow a user included in the list of each results.
 
 ## Technologies Used
 * HTML5
@@ -22,13 +29,12 @@
 * bcrypt (used for password encryption)
 * Flask
 * Sessions
-
+* smtplib (used for email handling)
+* File I/O (used to create email attachments)
 
 ## What I Learned
-* postgreSQL:  I have used MySQL before, but never postgreSQL.  There are many similarities; however there are minor differences for things such as date formatting and managing tables, views, etc.  (Example:  The commands in MySQL for displaying the list of databases, showing a table structure, etc., are completely different than this in postgreSQL).
-* Python:  Previously, I have only used PHP to accessing backend databases.
-* GET and POST methods
-* The importance of a clearly defined and comprehensive route map.  
-* The importance of a properly normalized SQL database.
+* I expected that the most difficult part of writing this application would be managing multiple languages.  Python “dictionaries” were constructed to contain the required English or German information.  All that was necessary to switch from English to German, or vice-versa, was to switch the dictionaries.  I did have to implement some character encoding in order to support letters with umlauts, such as the U in gemütlichkeit.
+* Error handling was a substantial part of the coding.  Care had to be taken to ensure that required fields were populated, etc.
+* The most challenging part was being able to accommodate user authentication and switching languages simultaneously; the routing required to do this was much more complicated than I originally anticipated.
 
-## Link to GutHub (https://github.com/tsanders30004/chirpApplication)
+## Link to GutHub (https://github.com/tsanders30004/uberkraft)
