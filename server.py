@@ -1,7 +1,8 @@
 import traceback
 
 import pg
-db=pg.DB(dbname='uberkraft')
+# db=pg.DB(dbname='uberkraft')
+
 
 import bcrypt
 
@@ -35,7 +36,13 @@ fromaddr = os.environ.get('FROM_EMAIL_ADDR')
 from_pw = os.environ.get('FROM_EMAIL_PW')
 toaddr = os.environ.get('TO_EMAIL_ADDR')
 
-
+db = pg.DB(
+  dbname=os.environ.get('DBNAME'),
+  host=os.environ.get('DBHOST'),
+  port=int(os.environ.get('DBPORT')),
+  user=os.environ.get('DBUSER'),
+  passwd=os.environ.get('DBPASSWORD')
+)
 
 
 def quoted(s):

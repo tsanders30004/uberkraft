@@ -1,0 +1,14 @@
+bcrypt==3.1.0
+cffi==1.7.0
+click==6.6
+gunicorn==19.6.0
+ordereddict==1.1
+pbr==1.10.0
+pycparser==2.14
+python-dotenv==0.5.1
+six==1.10.0
+stevedore==1.16.0
+vboxapi==1.0
+virtualenv==15.0.2
+virtualenv-clone==0.2.6
+virtualenvwrapper==4.7.1
